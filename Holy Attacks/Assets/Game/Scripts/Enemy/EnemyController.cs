@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour
 {
     bool isReadyToBeAttacked = false;
-    bool hadEnemyBeenAttacked =  false; //false
+    bool hasEnemyBeenAttacked =  false; //false
     GameSession gameSession;
 
     PlayerController player;
@@ -26,12 +26,14 @@ public class EnemyController : MonoBehaviour
             player.AttackEnemy(transform);
         }*/
 
-        if(isReadyToBeAttacked && !player.GetIsPlayerMoving() && !hadEnemyBeenAttacked)
+        if(isReadyToBeAttacked && !player.GetIsPlayerMoving() && !hasEnemyBeenAttacked)
         {
             isReadyToBeAttacked = false;
-            hadEnemyBeenAttacked = true;
+            hasEnemyBeenAttacked = true;
             gameSession.AddEnemiesToBeAttacked(gameObject);
         }
+
+
     }
 
     private void OnTriggerEnter(Collider other)
@@ -47,6 +49,8 @@ public class EnemyController : MonoBehaviour
         if(other.tag == "Player")
         {
             isReadyToBeAttacked = false;
+            hasEnemyBeenAttacked = false;
+            gameSession.RemoveEnemyFromList(gameObject);
         }
     }
 

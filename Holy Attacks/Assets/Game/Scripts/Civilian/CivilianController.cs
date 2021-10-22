@@ -7,20 +7,23 @@ public class CivilianController : MonoBehaviour
 {
     [SerializeField] NavMeshAgent agent;
     [SerializeField] Animator animator;
-    [SerializeField] Material material;
+
+    
+   
 
     Transform target, playerTarget;
     bool followPlayer = false;
     GameSession gameSession;
     PlayerController player;
 
+    float civilianStoppingDistanceFromPlayer = 0f;
     bool isCivilianAttacking = false;
     // Start is called before the first frame update
     void Start()
     {
         gameSession = FindObjectOfType<GameSession>();
         player = FindObjectOfType<PlayerController>();
-       // material = transform.GetChild(1).gameObject.GetComponent<SkinnedMeshRenderer>().material;
+       // material = this.transform.GetChild(0).gameObject.GetComponent<SkinnedMeshRenderer>().material;
     }
 
     // Update is called once per frame
@@ -41,11 +44,11 @@ public class CivilianController : MonoBehaviour
 
             else
             {
-                isCivilianAttacking = false;
-                followPlayer = true;
-                target = playerTarget;
+                SetTargetASPlayer();
             }
         }
+
+        //animation
 
         if(agent.velocity.magnitude == 0)
         {
@@ -60,17 +63,17 @@ public class CivilianController : MonoBehaviour
 
    
 
-    public void SetTarget(Transform transform, Material ma)
+    public void SetTarget(Transform transform, Material material)
     {
-        //transform.GetChild(1).gameObject.GetComponent<SkinnedMeshRenderer>().material = material;
-
+        
+        this.transform.GetChild(0).gameObject.GetComponent<SkinnedMeshRenderer>().material = material;
         playerTarget= target = transform;
         followPlayer = true;
         gameSession.AddFollower(gameObject);
         int currFollowerCount = gameSession.GetNumFollowers();
         float followerSpacingInc = gameSession.GetFollowerSpacingIncrement();
         agent.stoppingDistance += followerSpacingInc * currFollowerCount;
-
+        civilianStoppingDistanceFromPlayer = agent.stoppingDistance;
 
         //this.material = material;
         /*SkinnedMeshRenderer rend = transform.GetChild(1).gameObject.GetComponent<SkinnedMeshRenderer>();
@@ -83,18 +86,57 @@ public class CivilianController : MonoBehaviour
         target = transform;
         isCivilianAttacking = true;
         followPlayer = false;
+        agent.stoppingDistance = 0;
         //follow
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.tag == "Enemy" && !player.GetIsPlayerMoving())
+        if(other.tag == "Enemy" && !player.GetIsPlayerMoving() && isCivilianAttacking)
         {
+
+            StartCoroutine(StartPunching(other));
             //Debug.Log("tregiefisjdlfjsdlf");
-            gameSession.RemoveEnemyFromList(other.gameObject);
+            //gameSession.RemoveEnemyFromList(other.gameObject);
+           
+
+            
+        }
+    }
+
+    private IEnumerator StartPunching(Collider other)
+    {
+        animator.SetBool("Punch", true);
+        GameObject target = other.gameObject;
+        //other.enabled = false;
+
+
+        yield return new WaitForSeconds(2f);    //serialize time after which enemy die
+
+        if(target != null)
+        {
+            other.enabled = false;
             gameSession.RemoveFollower(gameObject);
+            gameSession.KillEnemy(target);
             Destroy(gameObject);
         }
+
+        else
+        {
+            SetTargetASPlayer();
+        }
+
+        //Destroy(gameObject);
+
+    }
+
+    public void SetTargetASPlayer()
+    {
+        animator.SetBool("Punch", false);
+        isCivilianAttacking = false;
+        followPlayer = true;
+        target = playerTarget;
+        agent.stoppingDistance = civilianStoppingDistanceFromPlayer;
     }
 
 }

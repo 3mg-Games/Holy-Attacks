@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class PlayerRadius : MonoBehaviour
 {
-    [SerializeField] SkinnedMeshRenderer SMR;
-    public Material material;
+    [SerializeField] SkinnedMeshRenderer renderer;
+    Material material;
     // Start is called before the first frame update
     void Start()
     {
-        material = SMR.material;
+        material = renderer.material;
     }
 
     // Update is called once per frame
@@ -22,7 +22,6 @@ public class PlayerRadius : MonoBehaviour
     {
         //Debug.Log("Trigger happened");
         
-
         if(other.tag == "Civilian")
         {
             other.GetComponent<CivilianController>().SetTarget(transform.parent.transform, material);
