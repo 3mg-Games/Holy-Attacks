@@ -20,12 +20,16 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] Image[] joystickImages;
     [SerializeField] Color joystickInActionColor;   
-    [SerializeField] Color joystickNotInActionColor;   
+    [SerializeField] Color joystickNotInActionColor;
 
     //[SerializeField] float rotationSpeed = 1.0f;
-   // [SerializeField] float rotationStep = 10f;
+    // [SerializeField] float rotationStep = 10f;
 
-    Joystick joystick;
+    [SerializeField] Joystick joystick;
+   // [SerializeField] Joystick fakeJoystick;
+
+
+   // Joystick joystick;
     float x, z;
     float singleStep;
     bool isPlayerMoving = false;
@@ -35,7 +39,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        joystick = FindObjectOfType<Joystick>();
+       // joystick = FindObjectOfType<Joystick>();
         timer = waitTimeBeforeAttack;
        // joystickImages = joystick.gameObject.GetComponentsInChildren<Image>();
         
@@ -57,6 +61,9 @@ public class PlayerController : MonoBehaviour
         {
             float moveHorizontal = joystick.Horizontal; //Input.GetAxis("Horizontal");
             float moveVertical = joystick.Vertical; // Input.GetAxis("Vertical");
+
+           // float mH = fakeJoystick.Horizontal;
+           // float mV = fakeJoystick.Vertical;
 
 
            /* if (Input.touchCount > 0)
@@ -154,7 +161,9 @@ public class PlayerController : MonoBehaviour
             //ActivateJoystickUi(true);
         }
     }
+
     
+
 }
 
 
