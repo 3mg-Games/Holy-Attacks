@@ -10,7 +10,7 @@ public class GameSession : MonoBehaviour
     [SerializeField] GameObject pause;
     [SerializeField] GameObject resume;
 
-    int numFollowers;
+    public int numFollowers;
     List<GameObject> followers = new List<GameObject>();
 
     int numEnemiesToBeAttacked;
@@ -40,7 +40,9 @@ public class GameSession : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(numEnemiesToBeAttacked > 0 && !isMobAttacking)  //remove numEnemeiestobeattacked
+        numOfFollowersText.text = numFollowers.ToString();
+
+        if (numEnemiesToBeAttacked > 0 && !isMobAttacking && !player.GetIsPlayerMoving())  //remove numEnemeiestobeattacked
         {
             isMobAttacking = true;
             StartCoroutine(MobAttack());
@@ -62,6 +64,7 @@ public class GameSession : MonoBehaviour
     {
         followers.Remove(follower);
         DecrementNumFollowers();
+        Destroy(follower);
     }
 
     public float GetFollowerSpacingIncrement()
@@ -72,13 +75,13 @@ public class GameSession : MonoBehaviour
     private void IncrementNumFollowers()
     {
         numFollowers++;
-        numOfFollowersText.text = numFollowers.ToString();
+        //numOfFollowersText.text = numFollowers.ToString();
     }
 
     private void DecrementNumFollowers()
     {
         numFollowers--;
-        numOfFollowersText.text = numFollowers.ToString();
+        //numOfFollowersText.text = numFollowers.ToString();
     }
 
     public void AddEnemiesToBeAttacked(GameObject target)
@@ -87,60 +90,119 @@ public class GameSession : MonoBehaviour
         numEnemiesToBeAttacked++;
     }
 
-    public void RemoveEnemyFromList(GameObject target)
+    public void RemoveEnemyFromList(GameObject target, bool exit)
     {
         enemiesToBeAttacked.Remove(target);
         numEnemiesToBeAttacked--;
+
+        if (exit)
+        {
+            if (numEnemiesToBeAttacked <= 0)
+            {
+                foreach (GameObject follower in followers)
+                {
+                    follower.GetComponent<CivilianController>().SetTargetASPlayer();
+                }
+            }
+
+            else
+            {
+                StartCoroutine(MobAttack());
+            }
+        }
+
         
     }
 
     public void KillEnemy(GameObject target)
     {
-        enemiesToBeAttacked.Remove(target);
-        numEnemiesToBeAttacked--;
+        //enemiesToBeAttacked.Remove(target);
+        //numEnemiesToBeAttacked--;
+        RemoveEnemyFromList(target, false);
+
         gotoNextEnemy = true;
+        
+
+        GameObject closestFollower = GetNewTarget(followers, target);
+        RemoveFollower(closestFollower);
+
         Destroy(target);
     }
 
     private IEnumerator MobAttack()
     {
         
-            while (numEnemiesToBeAttacked > 0)
-            {
-                gotoNextEnemy = false;
+           // while (numEnemiesToBeAttacked > 0)
+           // {
+             //   gotoNextEnemy = false;
             //GameObject target = enemiesToBeAttacked[0];
-                GameObject target = GetNewTarget();
+                GameObject target = GetNewTarget(enemiesToBeAttacked, player.gameObject);
+                if(target == null)
+                 {
+                     yield return null;
+                 }        
+
+        
+                 
                 for (int j = 0; j < numFollowers; j++)
                 {
-                    followers[j].GetComponent<CivilianController>().SetTargetAsEnemy(target.transform);
-                }
-                i++;
-                yield return new WaitUntil(() => gotoNextEnemy == true);
+            GameObject follower = followers[j];
+            if(follower != null)
+            {
+                follower.GetComponent<CivilianController>().SetTargetAsEnemy(target.transform);
             }
+                    
+                }
+        //    i++;
+        // yield return new WaitUntil(() => gotoNextEnemy == true);
+                isMobAttacking = false;
+                yield return null;
+          //  }
 
-        isMobAttacking = false;
+       // isMobAttacking = false;
     }
 
-    private GameObject GetNewTarget()
+    
+
+    public GameObject GetNewEnemy()
     {
-        Vector3 playerPos = player.transform.position;
-
-        float shortestDistance = Vector3.Distance(playerPos, enemiesToBeAttacked[0].transform.position);
-
-        GameObject target = enemiesToBeAttacked[0];
-
-        for(int itr = 1; itr < enemiesToBeAttacked.Count; itr++)
-        {
-            float distance = Vector3.Distance(playerPos, enemiesToBeAttacked[itr].transform.position);
-
-            if(distance < shortestDistance)
-            {
-                shortestDistance = distance;
-                target = enemiesToBeAttacked[itr];
-            }
-        }
-
+        GameObject target = GetNewTarget(enemiesToBeAttacked, player.gameObject);
         return target;
+    }
+    
+
+    private GameObject GetNewTarget(List<GameObject> targetList, GameObject target2)
+    {
+        
+
+        if (targetList.Count == 0)
+            return null;
+
+        else
+        {
+
+            GameObject target = targetList[0];
+            Vector3 target2Pos = target2.transform.position;
+
+        float shortestDistance = Vector3.Distance(target2Pos, targetList[0].transform.position);
+
+        
+
+       
+
+            for (int itr = 1; itr < targetList.Count; itr++)
+            {
+                float distance = Vector3.Distance(target2Pos, targetList[itr].transform.position);
+
+                if (distance < shortestDistance)
+                {
+                    shortestDistance = distance;
+                    target = targetList[itr];
+                }
+            }
+
+            return target;
+        }
     }
 
     public void Pause()
@@ -160,6 +222,12 @@ public class GameSession : MonoBehaviour
         Time.timeScale = 1;
         resume.SetActive(false);
         pause.SetActive(true);
+    }
+
+    public int GetFollowerNumber(GameObject follower)
+    {
+        int idx = followers.IndexOf(follower);
+        return idx + 1;
     }
   
 }

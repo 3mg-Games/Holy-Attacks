@@ -18,11 +18,14 @@ public class CivilianController : MonoBehaviour
 
     float civilianStoppingDistanceFromPlayer = 0f;
     bool isCivilianAttacking = false;
+
+    float agentInitialStoppingDistance = 0f;
     // Start is called before the first frame update
     void Start()
     {
         gameSession = FindObjectOfType<GameSession>();
         player = FindObjectOfType<PlayerController>();
+        agentInitialStoppingDistance = agent.stoppingDistance;
        // material = this.transform.GetChild(0).gameObject.GetComponent<SkinnedMeshRenderer>().material;
     }
 
@@ -37,14 +40,21 @@ public class CivilianController : MonoBehaviour
 
         }
 
-        else if(isCivilianAttacking)
+        else if(isCivilianAttacking && !followPlayer)
         {
             if(target != null)
                 agent.SetDestination(target.position);
 
             else
             {
-                SetTargetASPlayer();
+                animator.SetBool("Punch", false);
+                GameObject newTarget = gameSession.GetNewEnemy();  //error
+                if (newTarget != null)
+                {
+                    SetTargetAsEnemy(newTarget.transform);
+                }
+                else
+                    SetTargetASPlayer();
             }
         }
 
@@ -67,12 +77,15 @@ public class CivilianController : MonoBehaviour
     {
         
         this.transform.GetChild(0).gameObject.GetComponent<SkinnedMeshRenderer>().material = material;
+
         playerTarget= target = transform;
         followPlayer = true;
         gameSession.AddFollower(gameObject);
+
         int currFollowerCount = gameSession.GetNumFollowers();
         float followerSpacingInc = gameSession.GetFollowerSpacingIncrement();
         agent.stoppingDistance += followerSpacingInc * currFollowerCount;
+
         civilianStoppingDistanceFromPlayer = agent.stoppingDistance;
 
         //this.material = material;
@@ -92,10 +105,11 @@ public class CivilianController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.tag == "Enemy" && !player.GetIsPlayerMoving() && isCivilianAttacking)
+        if(other.tag == "Civilian Trigger" && !player.GetIsPlayerMoving() && isCivilianAttacking)
         {
+            if(other != null && other.transform.parent.gameObject != null && other.transform.parent.gameObject == target.gameObject)
 
-            StartCoroutine(StartPunching(other));
+            StartCoroutine(StartPunching(other.transform.parent.gameObject, other));
             //Debug.Log("tregiefisjdlfjsdlf");
             //gameSession.RemoveEnemyFromList(other.gameObject);
            
@@ -104,10 +118,10 @@ public class CivilianController : MonoBehaviour
         }
     }
 
-    private IEnumerator StartPunching(Collider other)
+    private IEnumerator StartPunching(GameObject other, Collider otherCollider2)
     {
         animator.SetBool("Punch", true);
-        GameObject target = other.gameObject;
+        GameObject target = other;
         //other.enabled = false;
 
 
@@ -115,15 +129,24 @@ public class CivilianController : MonoBehaviour
 
         if(target != null)
         {
-            other.enabled = false;
-            gameSession.RemoveFollower(gameObject);
+            otherCollider2.enabled = false;
             gameSession.KillEnemy(target);
-            Destroy(gameObject);
+            target = null;
+           // gameSession.RemoveFollower(gameObject);
+           
+           // Destroy(gameObject);
         }
 
         else
         {
-            SetTargetASPlayer();
+            animator.SetBool("Punch", false);
+            GameObject newTarget = gameSession.GetNewEnemy();
+            if(newTarget != null)
+            {
+                SetTargetAsEnemy(newTarget.transform);
+            }
+            else
+                SetTargetASPlayer();
         }
 
         //Destroy(gameObject);
@@ -133,10 +156,18 @@ public class CivilianController : MonoBehaviour
     public void SetTargetASPlayer()
     {
         animator.SetBool("Punch", false);
+        animator.SetBool("Run", true);
         isCivilianAttacking = false;
         followPlayer = true;
         target = playerTarget;
-        agent.stoppingDistance = civilianStoppingDistanceFromPlayer;
+
+        int currFollowerCount = gameSession.GetFollowerNumber(gameObject);
+        float followerSpacingInc = gameSession.GetFollowerSpacingIncrement();
+        agent.stoppingDistance = agentInitialStoppingDistance + followerSpacingInc * currFollowerCount;
+
+        civilianStoppingDistanceFromPlayer = agent.stoppingDistance;
+
+        //agent.stoppingDistance = civilianStoppingDistanceFromPlayer;
     }
 
 }

@@ -6,10 +6,13 @@ public class PlayerRadius : MonoBehaviour
 {
     [SerializeField] SkinnedMeshRenderer renderer;
     Material material;
+
+    GameSession gameSession;
     // Start is called before the first frame update
     void Start()
     {
         material = renderer.material;
+        gameSession = FindObjectOfType<GameSession>();
     }
 
     // Update is called once per frame
@@ -24,6 +27,8 @@ public class PlayerRadius : MonoBehaviour
         
         if(other.tag == "Civilian")
         {
+            int idx = gameSession.GetFollowerNumber(other.gameObject) - 1;
+            if(idx == -1)
             other.GetComponent<CivilianController>().SetTarget(transform.parent.transform, material);
         }
 

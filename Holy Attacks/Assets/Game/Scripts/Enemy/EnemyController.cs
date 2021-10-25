@@ -50,9 +50,11 @@ public class EnemyController : MonoBehaviour
         {
             isReadyToBeAttacked = false;
             hasEnemyBeenAttacked = false;
-            gameSession.RemoveEnemyFromList(gameObject);
+            gameSession.RemoveEnemyFromList(gameObject, true);
         }
     }
 
 
 }
+
+
