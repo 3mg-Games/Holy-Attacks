@@ -28,11 +28,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Joystick joystick;
     //[SerializeField] Joystick fakeJoystick;
 
-    [SerializeField] Transform fakeJoystickOuterCircle;
-    [SerializeField] Transform fakeJoystickButton;
+    // [SerializeField] Transform fakeJoystickOuterCircle;
+    //[SerializeField] Transform fakeJoystickButton;
+
+    public Transform circle;
+    public Transform outerCircle;
 
 
-   // Joystick joystick;
+    // Joystick joystick;
     float x, z;
     float singleStep;
     bool isPlayerMoving = false;
@@ -44,14 +47,14 @@ public class PlayerController : MonoBehaviour
 
     private bool touchStart = false;
 
-    Vector3 fakeJoystickOuterCircleInitialPos, fakeJoystickButtonInitialPos;
+    //Vector3 fakeJoystickOuterCircleInitialPos, fakeJoystickButtonInitialPos;
     // Start is called before the first frame update
     void Start()
     {
        // joystick = FindObjectOfType<Joystick>();
         timer = waitTimeBeforeAttack;
-        fakeJoystickOuterCircleInitialPos = fakeJoystickOuterCircle.position;
-        fakeJoystickButtonInitialPos = fakeJoystickButton.position;
+        //fakeJoystickOuterCircleInitialPos = fakeJoystickOuterCircle.position;
+        //fakeJoystickButtonInitialPos = fakeJoystickButton.position;
        // joystickImages = joystick.gameObject.GetComponentsInChildren<Image>();
 
         //Debug.Log(joystickImages.Length);
@@ -98,8 +101,10 @@ public class PlayerController : MonoBehaviour
                 animator.SetBool("Run", false);
                 ActivateJoystickUi(false);
 
-                fakeJoystickOuterCircle.position = fakeJoystickOuterCircleInitialPos;
-                fakeJoystickButton.position = fakeJoystickButtonInitialPos;
+                //fakeJoystickOuterCircle.position = fakeJoystickOuterCircleInitialPos;
+                //fakeJoystickButton.position = fakeJoystickButtonInitialPos;
+
+
             }
 
             else
@@ -109,6 +114,8 @@ public class PlayerController : MonoBehaviour
                 timer = waitTimeBeforeAttack;
                 animator.SetBool("Run", true);
                 ActivateJoystickUi(true);
+
+                //Vector2 
                 /*
                 Vector3 offset = fakeJoystickButtonInitialPos - new Vector3(moveHorizontal, moveVertical, 0f);
                 Vector3 dir = Vector2.ClampMagnitude(offset, 1.0f);
@@ -127,7 +134,7 @@ public class PlayerController : MonoBehaviour
 
             transform.Translate(movement * movementSpeed * Time.deltaTime, Space.World);
 
-
+            /*
             if (Input.GetMouseButtonDown(0))
             {
                 pointA = new Vector2(fakeJoystickButtonInitialPos.x, fakeJoystickButtonInitialPos.y);//Camera.main.ScreenToWorldPoint(new Vector3(moveHorizontal, moveVertical, Camera.main.transform.position.z));
@@ -146,11 +153,48 @@ public class PlayerController : MonoBehaviour
             else
             {
                 touchStart = false;
+            }*/
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                pointA = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z));
+
+               circle.transform.position = pointA * -1;
+                outerCircle.transform.position = pointA * -1;
+                circle.GetComponent<SpriteRenderer>().enabled = true;
+                outerCircle.GetComponent<SpriteRenderer>().enabled = true;
+            }
+            if (Input.GetMouseButton(0))
+            {
+                touchStart = true;
+                pointB = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z));
+            }
+            else
+            {
+                touchStart = false;
             }
 
         }
     }
 
+    private void FixedUpdate()
+    {
+        if (touchStart)
+        {
+            Vector2 offset = pointB - pointA;
+            Vector2 direction = Vector2.ClampMagnitude(offset, 1.0f);
+           // moveCharacter(direction * -1);
+
+            circle.transform.position = new Vector2(pointA.x + direction.x, pointA.y + direction.y) * -1;
+        }
+        else
+        {
+           // circle.GetComponent<SpriteRenderer>().enabled = false;
+            //outerCircle.GetComponent<SpriteRenderer>().enabled = false;
+        }
+
+    }
+    /*
     private void FixedUpdate()
     {
         if (touchStart)
@@ -172,7 +216,7 @@ public class PlayerController : MonoBehaviour
     void moveCharacter(Vector2 direction)
     {
        // player.Translate(direction * speed * Time.deltaTime);
-    }
+    }*/
 
     public bool GetIsPlayerMoving()
     {
