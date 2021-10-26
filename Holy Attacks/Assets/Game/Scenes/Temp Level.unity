@@ -6508,6 +6508,7 @@ MonoBehaviour:
   numOfFollowersText: {fileID: 628534760}
   pause: {fileID: 1318740841}
   resume: {fileID: 1595344859}
+  originalCam: {fileID: 947143707}
   numEnemiesToBeAttacked: 0
 --- !u!4 &1976228985
 Transform:
