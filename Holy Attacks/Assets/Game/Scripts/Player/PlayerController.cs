@@ -26,7 +26,10 @@ public class PlayerController : MonoBehaviour
     // [SerializeField] float rotationStep = 10f;
 
     [SerializeField] Joystick joystick;
-   // [SerializeField] Joystick fakeJoystick;
+    //[SerializeField] Joystick fakeJoystick;
+
+    [SerializeField] Transform fakeJoystickOuterCircle;
+    [SerializeField] Transform fakeJoystickButton;
 
 
    // Joystick joystick;
@@ -36,13 +39,21 @@ public class PlayerController : MonoBehaviour
     float timer;
 
     bool isGamePlaying = true;
+    private Vector2 pointA;
+    private Vector2 pointB;
+
+    private bool touchStart = false;
+
+    Vector3 fakeJoystickOuterCircleInitialPos, fakeJoystickButtonInitialPos;
     // Start is called before the first frame update
     void Start()
     {
        // joystick = FindObjectOfType<Joystick>();
         timer = waitTimeBeforeAttack;
+        fakeJoystickOuterCircleInitialPos = fakeJoystickOuterCircle.position;
+        fakeJoystickButtonInitialPos = fakeJoystickButton.position;
        // joystickImages = joystick.gameObject.GetComponentsInChildren<Image>();
-        
+
         //Debug.Log(joystickImages.Length);
 
     }
@@ -62,27 +73,33 @@ public class PlayerController : MonoBehaviour
             float moveHorizontal = joystick.Horizontal; //Input.GetAxis("Horizontal");
             float moveVertical = joystick.Vertical; // Input.GetAxis("Vertical");
 
-           // float mH = fakeJoystick.Horizontal;
-           // float mV = fakeJoystick.Vertical;
+            // float mH = fakeJoystick.Horizontal;
+            // float mV = fakeJoystick.Vertical;
 
 
-           /* if (Input.touchCount > 0)
-            {
-                moveHorizontal = Input.touches[0].deltaPosition.x;
-                moveVertical = Input.touches[0].deltaPosition.y;
+            /* if (Input.touchCount > 0)
+             {
+                 moveHorizontal = Input.touches[0].deltaPosition.x;
+                 moveVertical = Input.touches[0].deltaPosition.y;
 
-                moveHorizontal *= touchSensitivity;
-                moveVertical *= touchSensitivity;
-            }
+                 moveHorizontal *= touchSensitivity;
+                 moveVertical *= touchSensitivity;
+             }
 
 
-            */
+             */
+           
+
             if (moveHorizontal == 0 && moveVertical == 0)
             {
+
                 isPlayerMoving = false;
                 playerRadius.enabled = true;
                 animator.SetBool("Run", false);
                 ActivateJoystickUi(false);
+
+                fakeJoystickOuterCircle.position = fakeJoystickOuterCircleInitialPos;
+                fakeJoystickButton.position = fakeJoystickButtonInitialPos;
             }
 
             else
@@ -92,8 +109,14 @@ public class PlayerController : MonoBehaviour
                 timer = waitTimeBeforeAttack;
                 animator.SetBool("Run", true);
                 ActivateJoystickUi(true);
-            }
+                /*
+                Vector3 offset = fakeJoystickButtonInitialPos - new Vector3(moveHorizontal, moveVertical, 0f);
+                Vector3 dir = Vector2.ClampMagnitude(offset, 1.0f);
 
+                fakeJoystickButton.position = new Vector3(fakeJoystickButtonInitialPos.x + dir.x,
+                    fakeJoystickButtonInitialPos.y + dir.y,
+                    fakeJoystickButtonInitialPos.z) * -1;*/
+            }
 
 
             Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
@@ -103,7 +126,52 @@ public class PlayerController : MonoBehaviour
 
 
             transform.Translate(movement * movementSpeed * Time.deltaTime, Space.World);
+
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                pointA = new Vector2(fakeJoystickButtonInitialPos.x, fakeJoystickButtonInitialPos.y);//Camera.main.ScreenToWorldPoint(new Vector3(moveHorizontal, moveVertical, Camera.main.transform.position.z));
+
+                //fakeJoystickButton.position = pointA * -1;
+               // fakeJoystickOuterCircle.transform.position = pointA * -1;
+                //circle.GetComponent<SpriteRenderer>().enabled = true;
+               // outerCircle.GetComponent<SpriteRenderer>().enabled = true;
+            }
+            if (Input.GetMouseButton(0))
+            {
+                touchStart = true;
+                pointB = new Vector2(moveHorizontal, moveVertical);
+                    //Camera.main.ScreenToWorldPoint(new Vector3(moveHorizontal, moveVertical, Camera.main.transform.position.z));
+            }
+            else
+            {
+                touchStart = false;
+            }
+
         }
+    }
+
+    private void FixedUpdate()
+    {
+        if (touchStart)
+        {
+            Vector2 offset = pointB - pointA;
+            Vector2 direction = Vector2.ClampMagnitude(offset, 1.0f);
+            //moveCharacter(direction * -1);
+
+            fakeJoystickButton.transform.position = new Vector2(fakeJoystickButtonInitialPos.x + direction.x,
+                fakeJoystickButtonInitialPos.x + direction.y) * -1;
+        }
+        else
+        {
+           // circle.GetComponent<SpriteRenderer>().enabled = false;
+            //outerCircle.GetComponent<SpriteRenderer>().enabled = false;
+        }
+
+    }
+    void moveCharacter(Vector2 direction)
+    {
+       // player.Translate(direction * speed * Time.deltaTime);
     }
 
     public bool GetIsPlayerMoving()
