@@ -11,9 +11,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] SpriteRenderer playerRadius;
     [SerializeField] Animator animator;
 
-    [SerializeField] GameObject majicShoo;
+    [SerializeField] GameObject projectilePrefab;
     [SerializeField] float projectileForce = 10f;
     [SerializeField] Transform projectilePos;
+    [SerializeField] float maxProjectileDistance;
     [SerializeField] float waitTimeBeforeAttack = 0.4f;
 
     [SerializeField] float touchSensitivity = 0.3f;
@@ -21,6 +22,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Image[] joystickImages;
     [SerializeField] Color joystickInActionColor;   
     [SerializeField] Color joystickNotInActionColor;
+
+    [SerializeField] Image shockWave;
+    [SerializeField] Color shockWaveCharging;
+    [SerializeField] Color shockWaveActive;
+    [SerializeField] float shockWaveChargeTimer = 5f;
 
     //[SerializeField] float rotationSpeed = 1.0f;
     // [SerializeField] float rotationStep = 10f;
@@ -48,6 +54,9 @@ public class PlayerController : MonoBehaviour
     private bool touchStart = false;
 
     Vector3 circleLocalPos;
+
+    float shockWaveTimer;
+    bool isShockWaveActive = false;
     //Vector3 fakeJoystickOuterCircleInitialPos, fakeJoystickButtonInitialPos;
     // Start is called before the first frame update
     void Start()
@@ -55,6 +64,7 @@ public class PlayerController : MonoBehaviour
        // joystick = FindObjectOfType<Joystick>();
         timer = waitTimeBeforeAttack;
         circleLocalPos = circle.transform.localPosition;
+        shockWaveTimer = shockWaveChargeTimer;
         //fakeJoystickOuterCircleInitialPos = fakeJoystickOuterCircle.position;
         //fakeJoystickButtonInitialPos = fakeJoystickButton.position;
        // joystickImages = joystick.gameObject.GetComponentsInChildren<Image>();
@@ -67,6 +77,18 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
       
+        if(isShockWaveActive)
+        {
+            shockWaveTimer -= Time.deltaTime;
+
+            if(shockWaveTimer <= 0)
+            {
+                isShockWaveActive = false;
+                shockWave.color = shockWaveActive;
+                
+            }
+        }
+
         if(!isPlayerMoving)
         {
             timer -= Time.deltaTime;
@@ -103,11 +125,19 @@ public class PlayerController : MonoBehaviour
                 animator.SetBool("Run", false);
                 ActivateJoystickUi(false);
 
+                shockWave.gameObject.SetActive(true);
+
                 //fakeJoystickOuterCircle.position = fakeJoystickOuterCircleInitialPos;
                 //fakeJoystickButton.position = fakeJoystickButtonInitialPos;
 
                 //circle.Translate(circleLocalPos, Space.Self);
+//              shockWave.enabled = true;
                 circle.transform.localPosition = circleLocalPos;
+
+                if(Input.GetKeyDown(KeyCode.Space))
+                {
+                    AttackEnemy();
+                }
 
             }
 
@@ -125,6 +155,7 @@ public class PlayerController : MonoBehaviour
 
                 newPos = Vector3.ClampMagnitude(newPos, 98f);
 
+                shockWave.gameObject.SetActive(false);
                 circle.localPosition = newPos;
                 //circle.transform.Translate(dir.normalized * 10, Space.Self);
 
@@ -147,26 +178,7 @@ public class PlayerController : MonoBehaviour
 
             transform.Translate(movement * movementSpeed * Time.deltaTime, Space.World);
 
-            /*
-            if (Input.GetMouseButtonDown(0))
-            {
-                pointA = new Vector2(fakeJoystickButtonInitialPos.x, fakeJoystickButtonInitialPos.y);//Camera.main.ScreenToWorldPoint(new Vector3(moveHorizontal, moveVertical, Camera.main.transform.position.z));
-
-                //fakeJoystickButton.position = pointA * -1;
-               // fakeJoystickOuterCircle.transform.position = pointA * -1;
-                //circle.GetComponent<SpriteRenderer>().enabled = true;
-               // outerCircle.GetComponent<SpriteRenderer>().enabled = true;
-            }
-            if (Input.GetMouseButton(0))
-            {
-                touchStart = true;
-                pointB = new Vector2(moveHorizontal, moveVertical);
-                    //Camera.main.ScreenToWorldPoint(new Vector3(moveHorizontal, moveVertical, Camera.main.transform.position.z));
-            }
-            else
-            {
-                touchStart = false;
-            }*/
+            
 
             
 
@@ -174,29 +186,7 @@ public class PlayerController : MonoBehaviour
     }
 
     
-    /*
-    private void FixedUpdate()
-    {
-        if (touchStart)
-        {
-            Vector2 offset = pointB - pointA;
-            Vector2 direction = Vector2.ClampMagnitude(offset, 1.0f);
-            //moveCharacter(direction * -1);
-
-            fakeJoystickButton.transform.position = new Vector2(fakeJoystickButtonInitialPos.x + direction.x,
-                fakeJoystickButtonInitialPos.x + direction.y) * -1;
-        }
-        else
-        {
-           // circle.GetComponent<SpriteRenderer>().enabled = false;
-            //outerCircle.GetComponent<SpriteRenderer>().enabled = false;
-        }
-
-    }
-    void moveCharacter(Vector2 direction)
-    {
-       // player.Translate(direction * speed * Time.deltaTime);
-    }*/
+ 
 
     public bool GetIsPlayerMoving()
     {
@@ -207,11 +197,19 @@ public class PlayerController : MonoBehaviour
             return true;
     }
 
-    public void AttackEnemy(Transform enemy)
+    public void AttackEnemy()
     {
-        GameObject magicAttack = Instantiate(majicShoo, projectilePos.position, Quaternion.identity);
-        Vector3 dir = enemy.position - magicAttack.transform.position;
-        magicAttack.GetComponent<Rigidbody>().AddForce(dir.normalized * projectileForce, ForceMode.Impulse);
+        if (!isShockWaveActive)
+        {
+            GameObject projectile = Instantiate(projectilePrefab, projectilePos.position, Quaternion.identity);
+            Vector3 dir = transform.forward;
+            projectile.GetComponent<Rigidbody>().AddForce(dir.normalized * projectileForce, ForceMode.Impulse);
+            projectile.GetComponent<Projectile>().SetMaxDistance(maxProjectileDistance);
+
+            shockWave.color = shockWaveCharging;
+            shockWaveTimer = shockWaveChargeTimer;
+            isShockWaveActive = true;
+        }
     }
 
     private void ActivateJoystickUi(bool val)

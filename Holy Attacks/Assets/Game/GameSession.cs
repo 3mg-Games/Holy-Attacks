@@ -11,13 +11,15 @@ public class GameSession : MonoBehaviour
     [SerializeField] GameObject pause;
     [SerializeField] GameObject resume;
     [SerializeField] CinemachineVirtualCamera originalCam;
+    [SerializeField] float durationOfEnemyConfusion = 3f;
+    //[SerializeField] float dist
 
     bool isZoomedOut = false;
 
      int numFollowers;
     List<GameObject> followers = new List<GameObject>();
 
-    public int numEnemiesToBeAttacked;
+     int numEnemiesToBeAttacked;
     List<GameObject> enemiesToBeAttacked = new List<GameObject>();
 
     bool isMobAttacking = false;
@@ -26,6 +28,8 @@ public class GameSession : MonoBehaviour
     int i;
 
     PlayerController player;
+
+    List<GameObject> onStayFollowers = new List<GameObject>();
     // Start is called before the first frame update
     void Awake()
     {
@@ -40,6 +44,15 @@ public class GameSession : MonoBehaviour
         player = FindObjectOfType<PlayerController>();
     }
 
+    public void AddOnStayFollower(GameObject follower)
+    {
+        onStayFollowers.Add(follower);
+    }
+
+    public void RemoveOnStayFollower(GameObject follower)
+    {
+        onStayFollowers.Remove(follower);
+    }
 
     // Update is called once per frame
     void Update()
@@ -56,7 +69,7 @@ public class GameSession : MonoBehaviour
         {
             isMobAttacking = true;
             StartCoroutine(MobAttack());
-            Debug.Log("mob attacking");
+           // Debug.Log("mob attacking");
         }
     }
 
@@ -192,22 +205,34 @@ public class GameSession : MonoBehaviour
     {
         
 
-        if (targetList.Count == 0)
+        if (targetList.Count == 0 || target2 == null)
             return null;
 
         else
         {
 
-            GameObject target = targetList[0];
+            
             Vector3 target2Pos = target2.transform.position;
+            int itr = 0;
+            
+            while (itr < targetList.Count && targetList[itr] == null)
+            {
+                itr++;
 
-        float shortestDistance = Vector3.Distance(target2Pos, targetList[0].transform.position);
+            }
 
-        
+            if (itr >= targetList.Count)
+                return null;
+
+
+            GameObject target = targetList[itr];
+            float shortestDistance = Vector3.Distance(target2Pos, targetList[itr].transform.position);
+
+            itr++;
 
        
 
-            for (int itr = 1; itr < targetList.Count; itr++)
+            for (; itr < targetList.Count; itr++)
             {
                 float distance = Vector3.Distance(target2Pos, targetList[itr].transform.position);
 
@@ -245,6 +270,11 @@ public class GameSession : MonoBehaviour
     {
         int idx = followers.IndexOf(follower);
         return idx + 1;
+    }
+
+    public float GetDurationOfEnemyConfusion()
+    {
+        return durationOfEnemyConfusion;
     }
   
 }

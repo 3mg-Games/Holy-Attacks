@@ -7,18 +7,26 @@ public class EnemyController : MonoBehaviour
 {
     [SerializeField] Animator animator;
     [SerializeField] NavMeshAgent agent;
+    [SerializeField] GameObject confused;
+
+    float durationOfConfusion = 3f;
 
     bool isReadyToBeAttacked = false;
-    bool hasEnemyBeenAttacked =  false; //false
+   //bool hasEnemyBeenAttacked =  false; //false
+    bool hasEnemyStopped = false;
+    bool isEnemyAttacking = false;
+
+
+    bool isConfused = false;
     GameSession gameSession;
 
     PlayerController player;
 
-    bool isEnemyAttacking = false;
+    
 
     GameObject target;
 
-    bool hasEnemyStopped = false;
+    
 
     //Coroutine enemyAttack;
     float timer;
@@ -32,6 +40,7 @@ public class EnemyController : MonoBehaviour
        agent.enabled = false;
        player = FindObjectOfType<PlayerController>().GetComponent<PlayerController>();
        gameSession = FindObjectOfType<GameSession>();
+        durationOfConfusion = gameSession.GetDurationOfEnemyConfusion();
     }
 
     // Update is called once per frame
@@ -51,7 +60,9 @@ public class EnemyController : MonoBehaviour
             gameSession.AddEnemiesToBeAttacked(gameObject);
         }*/
 
-        if (agent.enabled)
+
+
+        if (agent.enabled && !isConfused)
         {
 
             if (target != null)
@@ -108,18 +119,31 @@ public class EnemyController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Player" && !isReadyToBeAttacked)
-        {
-            isReadyToBeAttacked = true;
-            gameSession.AddEnemiesToBeAttacked(gameObject);
-        }
+       
+        
+            if (other.tag == "Player" && !isReadyToBeAttacked)
+            {
+                isReadyToBeAttacked = true;
+                gameSession.AddEnemiesToBeAttacked(gameObject);
+            }
 
-        if(!isEnemyAttacking && other.tag == "Civilian")
-        {
-            isEnemyAttacking = true;
-            //agent.enabled = false;
-            animator.SetBool("Punch", true);
-        }
+            if (!isEnemyAttacking && other.tag == "Civilian" && !isConfused)
+            {
+                isEnemyAttacking = true;
+                //agent.enabled = false;
+                animator.SetBool("Punch", true);
+            }
+
+            if (other.tag == "Player Projectile" && !isConfused)
+            {
+            //Debug.Log("projectile hit");
+            isConfused = true;
+            confused.SetActive(true);
+            StartCoroutine(EnemyConfused());
+                
+                
+            }
+        
     }
 
     private void OnTriggerExit(Collider other)
@@ -127,18 +151,66 @@ public class EnemyController : MonoBehaviour
         if(other.tag == "Player" && isReadyToBeAttacked)
         {
             isReadyToBeAttacked = false;
-            hasEnemyBeenAttacked = false;
+            //hasEnemyBeenAttacked = false;
             gameSession.RemoveEnemyFromList(gameObject, true);
         }
     }
 
+    private IEnumerator EnemyConfused()
+    {
+      // isReadyToBeAttacked = false;            //uncomment
+      
+       //isEnemyAttacking = false;                //uncomment
+
+        animator.SetBool("Confused", true);
+
+        //bool isEn = false;
+        /*if (agent.enabled)
+        {
+            agent.isStopped = true;
+            agent.enabled = false;
+        }*/
+
+        if(agent.enabled)
+        {
+            agent.isStopped = true;
+        }
+
+        yield return new WaitForSeconds(durationOfConfusion);
+
+        animator.SetBool("Confused", false);
+        //agent.enabled = true;
+        if (agent.enabled)
+       {
+            //agent.enabled = true;
+           agent.isStopped = false;
+            //;
+            //;
+        }
+        timer = timerIniitalVal;
+
+        //isReadyToBe
+
+        isConfused = false;
+        confused.SetActive(false);
+    }
+
     public void SetTarget(GameObject target)
     {
-        agent.enabled = true;
-        this.target = target;
-        agent.SetDestination(this.target.transform.position);
-        animator.SetBool("Run", true);
+        if (!isConfused)
+        {
+            agent.enabled = true;
+            this.target = target;
+            if (this.target != null)
+            {
+                agent.SetDestination(this.target.transform.position);
+                animator.SetBool("Run", true);
+            }
+        }
     }
+
+
+
 
 
 

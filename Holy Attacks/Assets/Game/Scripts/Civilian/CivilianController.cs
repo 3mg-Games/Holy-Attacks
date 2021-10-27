@@ -107,15 +107,77 @@ public class CivilianController : MonoBehaviour
     {
         if(other.tag == "Civilian Trigger" && !player.GetIsPlayerMoving() && isCivilianAttacking)
         {
-            if(other != null && other.transform.parent.gameObject != null && other.transform.parent.gameObject == target.gameObject)
+            isCivilianAttacking = false;
 
-            StartCoroutine(StartPunching(other.transform.parent.gameObject, other));
-            //Debug.Log("tregiefisjdlfjsdlf");
-            //gameSession.RemoveEnemyFromList(other.gameObject);
-           
+            if (other != null && other.transform.parent.gameObject != null
+                && other.transform.parent.gameObject == target.gameObject)
+            {
+                // Debug.Log("Punch");
+               // isCivilianAttacking = false;
+                StartCoroutine(StartPunching(other.transform.parent.gameObject, other));
+                //Debug.Log("tregiefisjdlfjsdlf");
+                //gameSession.RemoveEnemyFromList(other.gameObject);
+            }
 
             
         }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.tag == "Civilian Trigger" && !player.GetIsPlayerMoving() && isCivilianAttacking)
+        {
+            isCivilianAttacking = false;
+            if (other != null && other.transform.parent.gameObject != null
+                && other.transform.parent.gameObject == target.gameObject)
+            {
+                animator.SetBool("Punch", true);
+                //isCivilianAttacking = false;
+                // Debug.Log("Punch");
+                // StartCoroutine(StartPunching(other.transform.parent.gameObject, other));
+                //Debug.Log("tregiefisjdlfjsdlf");
+                //gameSession.RemoveEnemyFromList(other.gameObject);
+                // StartCoroutine(OnStayPunch(other.transform.parent.gameObject, other));
+
+            }
+
+           
+
+
+        }
+    }
+
+    private IEnumerator OnStayPunch(GameObject other, Collider otherCollider2)
+    {
+        animator.SetBool("Punch", true);
+        GameObject target = other;
+
+        float t = Random.Range(1.90f, 2f);
+        yield return new WaitForSeconds(t);    //serialize time after which enemy die
+
+        if (target != null)
+        {
+            otherCollider2.enabled = false;
+            gameSession.KillEnemy(target);
+            target = null;
+            isCivilianAttacking = true;
+
+        }
+
+        else
+        {
+            animator.SetBool("Punch", false);
+            GameObject newTarget = gameSession.GetNewEnemy();
+            if (newTarget != null)
+            {
+                SetTargetAsEnemy(newTarget.transform);
+            }
+            else
+                SetTargetASPlayer();
+
+            isCivilianAttacking = true;
+        }
+
     }
 
     private IEnumerator StartPunching(GameObject other, Collider otherCollider2)
@@ -132,6 +194,7 @@ public class CivilianController : MonoBehaviour
             otherCollider2.enabled = false;
             gameSession.KillEnemy(target);
             target = null;
+            isCivilianAttacking = true;
            // gameSession.RemoveFollower(gameObject);
            
            // Destroy(gameObject);
@@ -147,6 +210,8 @@ public class CivilianController : MonoBehaviour
             }
             else
                 SetTargetASPlayer();
+
+            isCivilianAttacking = true;
         }
 
         //Destroy(gameObject);
