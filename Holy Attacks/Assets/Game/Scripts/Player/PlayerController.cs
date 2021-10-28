@@ -134,7 +134,7 @@ public class PlayerController : MonoBehaviour
             // float mH = fakeJoystick.Horizontal;
             // float mV = fakeJoystick.Vertical;
 
-
+            /*
              if (Input.touchCount > 0)
              {
                 usingMouse = false;
@@ -161,9 +161,9 @@ public class PlayerController : MonoBehaviour
                     // do something
                 }
 
-             }
+             }*/
 
-            else if(Input.GetMouseButtonDown(0))
+             if(Input.GetMouseButtonDown(0))
             {
                 usingMouse = true;
                 mouse = Input.mousePosition;
@@ -240,11 +240,16 @@ public class PlayerController : MonoBehaviour
                 
 
                 if (!usingMouse)
-                {
-                    p = new Vector3(touchHorizontal, touchVertical, 0f);
+                {/*
+                    //p = new Vector3(touchHorizontal, touchVertical, 0f);
+                    RectTransformUtility.ScreenPointToLocalPointInRectangle(
+        parentCanvas.transform as RectTransform, p,
+        parentCanvas.worldCamera,
+        out p);
+
                     outerCircleLocalPos = p;
 
-                    circleLocalPos = p;
+                    circleLocalPos = p;*/
                 }
                 else
                 {
@@ -268,8 +273,8 @@ public class PlayerController : MonoBehaviour
                     if (!usingMouse)
                     {
                         
-                        //outerCircle.transform.localPosition = outerCircleLocalPos;
-                        //circle.transform.localPosition = circleLocalPos;
+                        outerCircle.transform.localPosition = outerCircleLocalPos;
+                        circle.transform.localPosition = circleLocalPos;
                     }
                     else
                     {
@@ -278,6 +283,8 @@ public class PlayerController : MonoBehaviour
                        // Debug.Log(outerCircle.transform.localPosition);
                         circle.transform.localPosition = circleLocalPos;
                     }
+
+
                 }
 
                 if(touchStart)
