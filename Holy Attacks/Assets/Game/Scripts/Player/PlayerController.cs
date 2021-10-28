@@ -23,15 +23,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Color joystickInActionColor;   
     [SerializeField] Color joystickNotInActionColor;
 
-    [SerializeField] Image shockWave;
+    [SerializeField] GameObject shockWave;
     [SerializeField] Color shockWaveCharging;
     [SerializeField] Color shockWaveActive;
+    [SerializeField] Image shockWaveImage;
+    [SerializeField] ShockWave shockWaveScript;
     [SerializeField] float shockWaveChargeTimer = 5f;
 
     //[SerializeField] float rotationSpeed = 1.0f;
     // [SerializeField] float rotationStep = 10f;
 
     [SerializeField] Joystick joystick;
+
+    [SerializeField] Canvas parentCanvas;
     //[SerializeField] Joystick fakeJoystick;
 
     // [SerializeField] Transform fakeJoystickOuterCircle;
@@ -54,9 +58,26 @@ public class PlayerController : MonoBehaviour
     private bool touchStart = false;
 
     Vector3 circleLocalPos;
+    Vector3 outerCircleLocalPos;
 
     float shockWaveTimer;
     bool isShockWaveActive = false;
+
+    bool isFirstTouch = false;
+
+    float touchHorizontal = 0f, touchVertical = 0f;
+
+    Touch touch;
+
+    bool kiss = false;
+
+    Vector2 mouse = Vector2.zero;
+
+    bool usingMouse = false;
+
+    Vector3 p = Vector3.zero;
+    Vector2 p2 = Vector2.zero;
+
     //Vector3 fakeJoystickOuterCircleInitialPos, fakeJoystickButtonInitialPos;
     // Start is called before the first frame update
     void Start()
@@ -64,7 +85,9 @@ public class PlayerController : MonoBehaviour
        // joystick = FindObjectOfType<Joystick>();
         timer = waitTimeBeforeAttack;
         circleLocalPos = circle.transform.localPosition;
+        outerCircleLocalPos = outerCircle.transform.localPosition;
         shockWaveTimer = shockWaveChargeTimer;
+        shockWaveScript.SetMaxValue(shockWaveTimer);
         //fakeJoystickOuterCircleInitialPos = fakeJoystickOuterCircle.position;
         //fakeJoystickButtonInitialPos = fakeJoystickButton.position;
        // joystickImages = joystick.gameObject.GetComponentsInChildren<Image>();
@@ -73,6 +96,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    
     // Update is called once per frame
     void Update()
     {
@@ -80,11 +104,18 @@ public class PlayerController : MonoBehaviour
         if(isShockWaveActive)
         {
             shockWaveTimer -= Time.deltaTime;
+            shockWaveScript.SetValue(shockWaveChargeTimer - shockWaveTimer);
 
             if(shockWaveTimer <= 0)
             {
+                shockWaveImage.color = shockWaveActive;
+
+                shockWaveTimer = shockWaveChargeTimer;
+                shockWaveScript.SetMaxValue(shockWaveChargeTimer);
+
                 isShockWaveActive = false;
-                shockWave.color = shockWaveActive;
+
+                    //start fade away
                 
             }
         }
@@ -99,22 +130,70 @@ public class PlayerController : MonoBehaviour
         {
             float moveHorizontal = joystick.Horizontal; //Input.GetAxis("Horizontal");
             float moveVertical = joystick.Vertical; // Input.GetAxis("Vertical");
-
+            
             // float mH = fakeJoystick.Horizontal;
             // float mV = fakeJoystick.Vertical;
 
 
-            /* if (Input.touchCount > 0)
+             if (Input.touchCount > 0)
              {
-                 moveHorizontal = Input.touches[0].deltaPosition.x;
-                 moveVertical = Input.touches[0].deltaPosition.y;
+                usingMouse = false;
+               // Debug.Log("touch");
+                touch = Input.GetTouch(0);
+                kiss = touch.tapCount > 0 ? true : false;
+                // if you touch
+                if (kiss)
+                {
+                    touchHorizontal = touch.position.x;
+                    touchVertical = touch.position.y;
+                    //touchForward = touch.position.z;
+                    if (!isFirstTouch)
+                        isFirstTouch = true;
 
-                 moveHorizontal *= touchSensitivity;
-                 moveVertical *= touchSensitivity;
+                    touchStart = true;
+
+                }
+                // if touch ended
+                if (touch.phase == TouchPhase.Canceled || touch.phase == TouchPhase.Ended)
+                {
+                    touchStart = false;
+                    isFirstTouch = false;
+                    // do something
+                }
+
              }
 
+            else if(Input.GetMouseButtonDown(0))
+            {
+                usingMouse = true;
+                mouse = Input.mousePosition;
+                kiss = Input.GetMouseButton(0) ? true : false;
+                // if you touch
+                if (kiss)
+                {
+                    touchHorizontal = mouse.x;
+                    touchVertical = mouse.y;
+                    //touchForward = touch.position.z;
+                    if (!isFirstTouch)
+                        isFirstTouch = true;
 
-             */
+                    touchStart = true;
+
+                }
+                // if touch ended
+                if (Input.GetMouseButtonUp(0))
+                {
+                    touchStart = false;
+                    isFirstTouch = false;
+                    
+                    // do something
+                }
+            }
+
+            
+
+
+             
            
 
             if (moveHorizontal == 0 && moveVertical == 0)
@@ -131,10 +210,14 @@ public class PlayerController : MonoBehaviour
                 //fakeJoystickButton.position = fakeJoystickButtonInitialPos;
 
                 //circle.Translate(circleLocalPos, Space.Self);
-//              shockWave.enabled = true;
-                circle.transform.localPosition = circleLocalPos;
+                //              shockWave.enabled = true;
 
-                if(Input.GetKeyDown(KeyCode.Space))
+                //outerCircle.transform.
+                outerCircle.transform.localPosition = outerCircleLocalPos;
+                //circle.transform.localPosition = circleLocalPos;
+                circle.transform.localPosition = Vector3.zero;
+
+                if (Input.GetKeyDown(KeyCode.Space))
                 {
                     AttackEnemy();
                 }
@@ -149,14 +232,65 @@ public class PlayerController : MonoBehaviour
                 animator.SetBool("Run", true);
                 ActivateJoystickUi(true);
 
-                Vector3 dir = new Vector3(moveHorizontal, moveVertical, 0f);
-
-                Vector3 newPos = dir.normalized * 100;
-
-                newPos = Vector3.ClampMagnitude(newPos, 98f);
+               
 
                 shockWave.gameObject.SetActive(false);
-                circle.localPosition = newPos;
+
+
+                
+
+                if (!usingMouse)
+                {
+                    p = new Vector3(touchHorizontal, touchVertical, 0f);
+                    outerCircleLocalPos = p;
+
+                    circleLocalPos = p;
+                }
+                else
+                {
+                    var temp = Input.mousePosition;
+                    RectTransformUtility.ScreenPointToLocalPointInRectangle(
+        parentCanvas.transform as RectTransform, temp,
+        parentCanvas.worldCamera,
+        out p2);
+                    outerCircleLocalPos = p2;
+
+                    circleLocalPos = p2;
+                }
+                    
+
+                
+
+                if (isFirstTouch)
+                {
+                    isFirstTouch = false;
+
+                    if (!usingMouse)
+                    {
+                        
+                        //outerCircle.transform.localPosition = outerCircleLocalPos;
+                        //circle.transform.localPosition = circleLocalPos;
+                    }
+                    else
+                    {
+
+                        outerCircle.transform.localPosition = outerCircleLocalPos;
+                       // Debug.Log(outerCircle.transform.localPosition);
+                        circle.transform.localPosition = circleLocalPos;
+                    }
+                }
+
+                if(touchStart)
+                {
+                    Vector3 dir = new Vector3(moveHorizontal, moveVertical, 0f);
+
+                    Vector3 newPos = dir.normalized * 150;
+
+                    newPos = Vector3.ClampMagnitude(newPos, 120f);
+                    circle.localPosition = newPos;
+                }
+
+                
                 //circle.transform.Translate(dir.normalized * 10, Space.Self);
 
                 //Vector2 
@@ -206,8 +340,8 @@ public class PlayerController : MonoBehaviour
             projectile.GetComponent<Rigidbody>().AddForce(dir.normalized * projectileForce, ForceMode.Impulse);
             projectile.GetComponent<Projectile>().SetMaxDistance(maxProjectileDistance);
 
-            shockWave.color = shockWaveCharging;
-            shockWaveTimer = shockWaveChargeTimer;
+            shockWaveImage.color = shockWaveCharging;   //stop fadeaway
+            
             isShockWaveActive = true;
         }
     }
