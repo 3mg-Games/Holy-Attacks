@@ -6,8 +6,8 @@ public class Readme : ScriptableObject {
 	public string title;
 	public Section[] sections;
 	public bool loadedLayout;
-	
-	[Serializable]
+    //6756ed7b80223ac4e8f026ce27541de4
+    [Serializable]
 	public class Section {
 		public string heading, text, linkText, url;
 	}
