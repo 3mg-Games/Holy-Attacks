@@ -78,7 +78,7 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _TextureVisibility: 1
+    - _TextureVisibility: 0.87
     - _UVSec: 0
     - _WaterHeight: 0
     - _ZWrite: 1
@@ -87,5 +87,5 @@ Material:
     - _DistTiling: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _MoveDirection: {r: 0, g: 0, b: 0, a: 0}
-    - _Tiling: {r: 1, g: 1, b: 1, a: 1}
-    - _WaterColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Tiling: {r: 0.15, g: 0.27, b: 0, a: 0}
+    - _WaterColor: {r: 0, g: 0.5970874, b: 1, a: 1}
