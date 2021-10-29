@@ -78,6 +78,12 @@ public class PlayerController : MonoBehaviour
     Vector3 p = Vector3.zero;
     Vector2 p2 = Vector2.zero;
 
+    float hasteTimer = 0f;
+
+    bool playerHaste = false;
+
+    float playerInitialSpeed;
+
     //Vector3 fakeJoystickOuterCircleInitialPos, fakeJoystickButtonInitialPos;
     // Start is called before the first frame update
     void Start()
@@ -88,6 +94,8 @@ public class PlayerController : MonoBehaviour
         outerCircleLocalPos = outerCircle.transform.localPosition;
         shockWaveTimer = shockWaveChargeTimer;
         shockWaveScript.SetMaxValue(shockWaveTimer);
+
+        playerInitialSpeed = movementSpeed;
         //fakeJoystickOuterCircleInitialPos = fakeJoystickOuterCircle.position;
         //fakeJoystickButtonInitialPos = fakeJoystickButton.position;
        // joystickImages = joystick.gameObject.GetComponentsInChildren<Image>();
@@ -101,6 +109,19 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
       
+        if(playerHaste)
+        {
+            hasteTimer -= Time.deltaTime;
+
+            if(hasteTimer <= 0)
+            {
+                movementSpeed = playerInitialSpeed;
+                playerHaste = false;
+            }
+        }
+
+
+
         if(isShockWaveActive)
         {
             shockWaveTimer -= Time.deltaTime;
@@ -327,7 +348,12 @@ public class PlayerController : MonoBehaviour
     }
 
     
- 
+    public void PlayerHaste(float percentageInc, float hasteTime)
+    {
+        movementSpeed = movementSpeed + movementSpeed * percentageInc / 100f;
+        hasteTimer = hasteTime;
+        playerHaste = true;
+    }
 
     public bool GetIsPlayerMoving()
     {

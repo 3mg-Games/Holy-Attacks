@@ -12,6 +12,7 @@ public class GameSession : MonoBehaviour
     [SerializeField] GameObject resume;
     [SerializeField] CinemachineVirtualCamera originalCam;
     [SerializeField] float durationOfEnemyConfusion = 3f;
+   
     //[SerializeField] float dist
 
     bool isZoomedOut = false;
@@ -116,11 +117,18 @@ public class GameSession : MonoBehaviour
         //numOfFollowersText.text = numFollowers.ToString();
     }
 
+    public List<GameObject> GetFollowers()
+    {
+        return followers;
+    }
+
     public void AddEnemiesToBeAttacked(GameObject target)
     {
         enemiesToBeAttacked.Add(target);
         numEnemiesToBeAttacked++;
     }
+
+    
 
     public void RemoveEnemyFromList(GameObject target, bool exit)
     {

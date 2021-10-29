@@ -20,18 +20,33 @@ public class CivilianController : MonoBehaviour
     bool isCivilianAttacking = false;
 
     float agentInitialStoppingDistance = 0f;
+
+    bool isCivilianHasting = false;
+    float hasteTimer = 0f;
+    float civilianInitialSpeed;
     // Start is called before the first frame update
     void Start()
     {
         gameSession = FindObjectOfType<GameSession>();
         player = FindObjectOfType<PlayerController>();
         agentInitialStoppingDistance = agent.stoppingDistance;
-       // material = this.transform.GetChild(0).gameObject.GetComponent<SkinnedMeshRenderer>().material;
+        civilianInitialSpeed = agent.speed;
+        // material = this.transform.GetChild(0).gameObject.GetComponent<SkinnedMeshRenderer>().material;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(isCivilianHasting)
+        {
+            hasteTimer -= Time.deltaTime;
+
+            if(hasteTimer <= 0)
+            {
+                agent.speed = civilianInitialSpeed;
+                isCivilianHasting = false;
+            }
+        }
         
         if(followPlayer)
         {
@@ -233,6 +248,14 @@ public class CivilianController : MonoBehaviour
         civilianStoppingDistanceFromPlayer = agent.stoppingDistance;
 
         //agent.stoppingDistance = civilianStoppingDistanceFromPlayer;
+    }
+
+
+    public void CivilianHaste(float percentageInc, float hasteTime)
+    {
+        agent.speed = agent.speed + agent.speed * percentageInc / 100f;
+        hasteTimer = hasteTime;
+        isCivilianHasting = true;
     }
 
 }
