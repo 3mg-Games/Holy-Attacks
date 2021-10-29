@@ -48,6 +48,7 @@ public class EnemyController : MonoBehaviour
        player = FindObjectOfType<PlayerController>().GetComponent<PlayerController>();
        gameSession = FindObjectOfType<GameSession>();
         durationOfConfusion = gameSession.GetDurationOfEnemyConfusion();
+        //gameSession.
        // healthBar = transform.GetComponentInChildren<HealthBar>();
         //healthBar.SetMaxValue(health);
 

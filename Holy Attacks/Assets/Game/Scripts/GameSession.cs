@@ -32,6 +32,8 @@ public class GameSession : MonoBehaviour
     PlayerController player;
 
     List<GameObject> onStayFollowers = new List<GameObject>();
+
+    int numEnemies = 0;
     // Start is called before the first frame update
     void Awake()
     {
@@ -57,7 +59,15 @@ public class GameSession : MonoBehaviour
     }*/
 
     // Update is called once per frame
+    public void IncNumOfEnemies()
+    {
+        numEnemies++;
+    }
 
+    public void DecNumEnemies()
+    {
+        numEnemies--;
+    }
 
     private void LateUpdate()
     {
