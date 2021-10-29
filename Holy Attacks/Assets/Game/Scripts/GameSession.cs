@@ -43,7 +43,7 @@ public class GameSession : MonoBehaviour
     {
         player = FindObjectOfType<PlayerController>();
     }
-
+    /*
     public void AddOnStayFollower(GameObject follower)
     {
         onStayFollowers.Add(follower);
@@ -52,18 +52,26 @@ public class GameSession : MonoBehaviour
     public void RemoveOnStayFollower(GameObject follower)
     {
         onStayFollowers.Remove(follower);
-    }
+    }*/
 
     // Update is called once per frame
-    void Update()
-    {
-        numOfFollowersText.text = numFollowers.ToString();
 
-        if(numFollowers > 5 && !isZoomedOut)
+
+    private void LateUpdate()
+    {
+
+        if (numFollowers > 5 && !isZoomedOut)
         {
             isZoomedOut = true;
             originalCam.Priority = 1;
         }
+
+    }
+    void Update()
+    {
+        numOfFollowersText.text = numFollowers.ToString();
+
+       
 
         if (numEnemiesToBeAttacked > 0 && !isMobAttacking && !player.GetIsPlayerMoving())  //remove numEnemeiestobeattacked
         {

@@ -8,6 +8,8 @@ TagManager:
   - Enemy
   - Civilian Trigger
   - Player Projectile
+  - Water
+  - PowerUp
   layers:
   - Default
   - TransparentFX
