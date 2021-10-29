@@ -10,6 +10,7 @@ TagManager:
   - Player Projectile
   - Water
   - PowerUp
+  - Enemy Boss
   layers:
   - Default
   - TransparentFX

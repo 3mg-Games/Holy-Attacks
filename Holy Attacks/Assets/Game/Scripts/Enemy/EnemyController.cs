@@ -31,7 +31,14 @@ public class EnemyController : MonoBehaviour
     //Coroutine enemyAttack;
     float timer;
     float timerIniitalVal = 2f;
+    float timerIniitalInitialVal = 2f;
     float timerDecrementVal;
+
+    //HealthBar healthBar;
+
+    float health = 2f;
+
+    bool isHealthTriggered = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -41,6 +48,9 @@ public class EnemyController : MonoBehaviour
        player = FindObjectOfType<PlayerController>().GetComponent<PlayerController>();
        gameSession = FindObjectOfType<GameSession>();
         durationOfConfusion = gameSession.GetDurationOfEnemyConfusion();
+       // healthBar = transform.GetComponentInChildren<HealthBar>();
+        //healthBar.SetMaxValue(health);
+
     }
 
     // Update is called once per frame
@@ -59,8 +69,17 @@ public class EnemyController : MonoBehaviour
             hasEnemyBeenAttacked = true;
             gameSession.AddEnemiesToBeAttacked(gameObject);
         }*/
+        /*
+        if(isHealthTriggered)
+        {
+            health -= Time.deltaTime;
+            healthBar.SetValue(health);
 
-
+            if(health <= 0f)
+            {
+                isHealthTriggered = false;
+            }
+        }*/
 
         if (agent.enabled && !isConfused)
         {
@@ -76,11 +95,28 @@ public class EnemyController : MonoBehaviour
                     agent.isStopped = true;
                     //agent.enabled = false;
                     animator.SetBool("Punch", true);
+                    isHealthTriggered = true;
                     hasEnemyStopped = true;
                     
                     if(timer <= 0f)
                     {
-                        KillFollower();
+                        if (tag == "Enemy Boss")
+                        {
+                            timerIniitalVal = timerIniitalInitialVal;
+                            timer = timerIniitalVal;
+
+                            Debug.Log("I am booss");
+                            GameObject newTar = gameSession.GetNewFollower(gameObject);
+                            animator.SetBool("Punch", false);
+                            agent.isStopped = false;
+                            SetTarget(newTar);
+
+                            KillFollower();
+                        }
+
+
+                        else
+                            KillFollower();
                     }
                     //enemyAttack = StartCoroutine(KillFollower());
                 }
@@ -93,6 +129,7 @@ public class EnemyController : MonoBehaviour
                     //Debug.Log("resume");
                     agent.isStopped = false;
                     animator.SetBool("Punch", false);
+                    isHealthTriggered = false;
                     //  agent.SetDestination(target.transform.position);
                 }
             }
@@ -132,7 +169,8 @@ public class EnemyController : MonoBehaviour
                 isEnemyAttacking = true;
                 //agent.enabled = false;
                 animator.SetBool("Punch", true);
-            }
+                isHealthTriggered = true;
+        }
 
             if (other.tag == "Player Projectile" && !isConfused)
             {
@@ -205,8 +243,14 @@ public class EnemyController : MonoBehaviour
             {
                 agent.SetDestination(this.target.transform.position);
                 animator.SetBool("Run", true);
+                
             }
         }
+    }
+
+    public void EnableHealthBar()
+    {
+        isHealthTriggered = true;
     }
 
 

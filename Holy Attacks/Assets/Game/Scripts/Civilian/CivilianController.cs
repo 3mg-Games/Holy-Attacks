@@ -8,7 +8,7 @@ public class CivilianController : MonoBehaviour
     [SerializeField] NavMeshAgent agent;
     [SerializeField] Animator animator;
 
-    
+    IEnumerator co = null;
    
 
     Transform target, playerTarget;
@@ -31,6 +31,8 @@ public class CivilianController : MonoBehaviour
         player = FindObjectOfType<PlayerController>();
         agentInitialStoppingDistance = agent.stoppingDistance;
         civilianInitialSpeed = agent.speed;
+
+        
         // material = this.transform.GetChild(0).gameObject.GetComponent<SkinnedMeshRenderer>().material;
     }
 
@@ -128,8 +130,10 @@ public class CivilianController : MonoBehaviour
                 && other.transform.parent.gameObject == target.gameObject)
             {
                 // Debug.Log("Punch");
-               // isCivilianAttacking = false;
-                StartCoroutine(StartPunching(other.transform.parent.gameObject, other));
+                // isCivilianAttacking = false;
+                co = StartPunching(other.transform.parent.gameObject, other);
+                StartCoroutine(co);
+               // StartCoroutine(StartPunching(other.transform.parent.gameObject, other));
                 //Debug.Log("tregiefisjdlfjsdlf");
                 //gameSession.RemoveEnemyFromList(other.gameObject);
             }
@@ -200,7 +204,7 @@ public class CivilianController : MonoBehaviour
         animator.SetBool("Punch", true);
         GameObject target = other;
         //other.enabled = false;
-
+        target.GetComponent<EnemyController>().EnableHealthBar();
 
         yield return new WaitForSeconds(2f);    //serialize time after which enemy die
 
@@ -208,7 +212,10 @@ public class CivilianController : MonoBehaviour
         {
             otherCollider2.enabled = false;
             gameSession.KillEnemy(target);
+            //if(!(target.tag == "Enemy Boss"))
             target = null;
+
+
             isCivilianAttacking = true;
            // gameSession.RemoveFollower(gameObject);
            
@@ -258,4 +265,10 @@ public class CivilianController : MonoBehaviour
         isCivilianHasting = true;
     }
 
+    public void SetTargetAsNull()
+    {
+        StopCoroutine(co);
+       // target = null;
+        //isCivilianAttacking = true;
+    }
 }

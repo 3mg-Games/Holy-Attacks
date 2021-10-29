@@ -12,6 +12,7 @@ public class GameSession : MonoBehaviour
     [SerializeField] GameObject resume;
     [SerializeField] CinemachineVirtualCamera originalCam;
     [SerializeField] float durationOfEnemyConfusion = 3f;
+    [SerializeField] int numOfFollowersNeededToEliminateBoss = 3; 
    
     //[SerializeField] float dist
 
@@ -154,19 +155,56 @@ public class GameSession : MonoBehaviour
         
     }
 
+    public void SetFollowersToNull()
+    {
+        foreach(GameObject follower in followers)
+        {
+            if(follower != null)
+            {
+                follower.GetComponent<CivilianController>().SetTargetAsNull();
+            }
+        }
+    }
+
     public void KillEnemy(GameObject target)
     {
-        //enemiesToBeAttacked.Remove(target);
-        //numEnemiesToBeAttacked--;
-        RemoveEnemyFromList(target, false);
+        // add extra code for boss here
+        if(!(target.tag == "Enemy Boss"))
+        {
+            RemoveEnemyFromList(target, false);
 
-        gotoNextEnemy = true;
+            gotoNextEnemy = true;
+        }
+
+        else
+        {
+            Debug.Log("Boss");
+            numOfFollowersNeededToEliminateBoss--;
+            SetFollowersToNull();
+
+            if(numOfFollowersNeededToEliminateBoss <= 0)
+            {
+                RemoveEnemyFromList(target, false);
+
+                gotoNextEnemy = true;
+            }
+        }
+        
         
 
         GameObject closestFollower = GetNewTarget(followers, target);
         RemoveFollower(closestFollower);
 
+        if(!(target.tag == "Enemy Boss"))
         Destroy(target);
+
+        else
+        {
+            if (numOfFollowersNeededToEliminateBoss <= 0)
+            {
+                Destroy(target);
+            }
+        }
     }
 
     private IEnumerator MobAttack()
