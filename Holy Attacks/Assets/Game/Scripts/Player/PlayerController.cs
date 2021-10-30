@@ -36,6 +36,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Joystick joystick;
 
     [SerializeField] Canvas parentCanvas;
+
+    [SerializeField] GameObject staffGlow;
+    [SerializeField] Animator staffAnimator;
+
+    
     //[SerializeField] Joystick fakeJoystick;
 
     // [SerializeField] Transform fakeJoystickOuterCircle;
@@ -84,6 +89,9 @@ public class PlayerController : MonoBehaviour
 
     float playerInitialSpeed;
 
+    GameSession gameSession;
+    bool areSpellRemaining = true;
+
     //Vector3 fakeJoystickOuterCircleInitialPos, fakeJoystickButtonInitialPos;
     // Start is called before the first frame update
     void Start()
@@ -96,6 +104,8 @@ public class PlayerController : MonoBehaviour
         shockWaveScript.SetMaxValue(shockWaveTimer);
 
         playerInitialSpeed = movementSpeed;
+
+        gameSession = FindObjectOfType<GameSession>();
         //fakeJoystickOuterCircleInitialPos = fakeJoystickOuterCircle.position;
         //fakeJoystickButtonInitialPos = fakeJoystickButton.position;
        // joystickImages = joystick.gameObject.GetComponentsInChildren<Image>();
@@ -234,6 +244,7 @@ public class PlayerController : MonoBehaviour
                 //              shockWave.enabled = true;
 
                 //outerCircle.transform.
+                
                 outerCircle.transform.localPosition = outerCircleLocalPos;
                 //circle.transform.localPosition = circleLocalPos;
                 circle.transform.localPosition = Vector3.zero;
@@ -366,17 +377,37 @@ public class PlayerController : MonoBehaviour
 
     public void AttackEnemy()
     {
-        if (!isShockWaveActive)
+        if (!isShockWaveActive && areSpellRemaining)
         {
-            GameObject projectile = Instantiate(projectilePrefab, projectilePos.position, Quaternion.identity);
-            Vector3 dir = transform.forward;
-            projectile.GetComponent<Rigidbody>().AddForce(dir.normalized * projectileForce, ForceMode.Impulse);
-            projectile.GetComponent<Projectile>().SetMaxDistance(maxProjectileDistance);
-
-            shockWaveImage.color = shockWaveCharging;   //stop fadeaway
-            
-            isShockWaveActive = true;
+            //animator.SetTrigger("Magic");
+            gameSession.DecrementSpell();
+            staffGlow.SetActive(true);
+            staffAnimator.SetTrigger("Attack");
+           // ShockWave();
         }
+    }
+
+    public void ShockWave()
+    {
+        GameObject projectile = Instantiate(projectilePrefab, projectilePos.position, Quaternion.identity);
+        Vector3 dir = transform.forward;
+        projectile.GetComponent<Rigidbody>().AddForce(dir.normalized * projectileForce, ForceMode.Impulse);
+        projectile.GetComponent<Projectile>().SetMaxDistance(maxProjectileDistance);
+
+        shockWaveImage.color = shockWaveCharging;   //stop fadeaway
+
+        isShockWaveActive = true;
+    }
+
+    public void SetAreSpellsRemaining(bool val)
+    {
+        areSpellRemaining = val;
+    }
+
+    public void DeactivateGlow(bool val)
+    {
+        if (val)
+            staffGlow.SetActive(false);
     }
 
     private void ActivateJoystickUi(bool val)

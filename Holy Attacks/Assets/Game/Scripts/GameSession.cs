@@ -12,8 +12,9 @@ public class GameSession : MonoBehaviour
     [SerializeField] GameObject resume;
     [SerializeField] CinemachineVirtualCamera originalCam;
     [SerializeField] float durationOfEnemyConfusion = 3f;
-    [SerializeField] int numOfFollowersNeededToEliminateBoss = 3; 
-   
+    [SerializeField] int numOfFollowersNeededToEliminateBoss = 3;
+    [SerializeField] TextMeshProUGUI spellText;
+    [SerializeField] int totalSpell = 3;
     //[SerializeField] float dist
 
     bool isZoomedOut = false;
@@ -34,12 +35,15 @@ public class GameSession : MonoBehaviour
     List<GameObject> onStayFollowers = new List<GameObject>();
 
     int numEnemies = 0;
+    int numSpellRemaining;
     // Start is called before the first frame update
     void Awake()
     {
         numFollowers = 0;
         numEnemiesToBeAttacked = 0;
         i = 0;
+        numSpellRemaining = totalSpell;
+        spellText.text = numSpellRemaining.ToString();
         
     }
 
@@ -79,6 +83,16 @@ public class GameSession : MonoBehaviour
         }
 
     }
+
+    public void DecrementSpell()
+    {
+        numSpellRemaining--;
+        spellText.text = numSpellRemaining.ToString();
+
+        if (numSpellRemaining <= 0)
+            player.SetAreSpellsRemaining(false);
+    }
+
     void Update()
     {
         numOfFollowersText.text = numFollowers.ToString();

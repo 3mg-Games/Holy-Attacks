@@ -93,9 +93,9 @@ public class EnemyController : MonoBehaviour
                 if (agent.remainingDistance < 1.5f)
                 {
                     timer -= Time.deltaTime;
-
-                    if(!(tag == "Enemy Boss"))
-                    agent.isStopped = true;
+                    agent.isStopped = false;
+                    //if(!(tag == "Enemy Boss"))
+                    //agent.isStopped = true;
                     //agent.enabled = false;
                     animator.SetBool("Punch", true);
                     isHealthTriggered = true;
