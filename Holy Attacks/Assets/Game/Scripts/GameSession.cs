@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Cinemachine;
+using System;
+using UnityEngine.SceneManagement;
+//using Unity.S
 
 public class GameSession : MonoBehaviour
 {
@@ -15,6 +18,8 @@ public class GameSession : MonoBehaviour
     [SerializeField] int numOfFollowersNeededToEliminateBoss = 3;
     [SerializeField] TextMeshProUGUI spellText;
     [SerializeField] int totalSpell = 3;
+
+    [SerializeField] GameObject continueButton;
     //[SerializeField] float dist
 
     bool isZoomedOut = false;
@@ -227,8 +232,30 @@ public class GameSession : MonoBehaviour
             if (numOfFollowersNeededToEliminateBoss <= 0)
             {
                 Destroy(target);
+                Win();
             }
         }
+    }
+
+    private void Win()
+    {
+        player.Win();
+
+        foreach(GameObject follower in followers)
+        {
+            if(follower != null)
+            {
+                follower.GetComponent<CivilianController>().Win();
+            }
+        }
+
+        continueButton.SetActive(true);
+    }
+
+    public void Continue()
+    {
+        //Scenemange
+        SceneManager.LoadScene(0);
     }
 
     private IEnumerator MobAttack()

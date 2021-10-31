@@ -40,6 +40,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] GameObject staffGlow;
     [SerializeField] Animator staffAnimator;
 
+    [SerializeField] GameObject tutorial;
+    bool isTutorail = true;
+
     
     //[SerializeField] Joystick fakeJoystick;
 
@@ -196,6 +199,12 @@ public class PlayerController : MonoBehaviour
 
              if(Input.GetMouseButtonDown(0))
             {
+                if(isTutorail)
+                {
+                    isTutorail = false;
+                    Destroy(tutorial);
+                }
+
                 usingMouse = true;
                 mouse = Input.mousePosition;
                 kiss = Input.GetMouseButton(0) ? true : false;
@@ -448,6 +457,12 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("Run", true);
             //ActivateJoystickUi(true);
         }
+    }
+
+    public void Win()
+    {
+        animator.SetTrigger("Win");
+        isGamePlaying = false;
     }
 
     

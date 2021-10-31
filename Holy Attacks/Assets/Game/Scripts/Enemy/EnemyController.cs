@@ -34,14 +34,16 @@ public class EnemyController : MonoBehaviour
     float timerIniitalInitialVal = 2f;
     float timerDecrementVal;
 
-    //HealthBar healthBar;
+    HealthBar healthBar;
 
     float health = 2f;
+    //float initialHealth;
 
     bool isHealthTriggered = false;
     // Start is called before the first frame update
     void Start()
     {
+
         timer = timerIniitalVal;
         timerDecrementVal = 0.4f;
        agent.enabled = false;
@@ -49,28 +51,18 @@ public class EnemyController : MonoBehaviour
        gameSession = FindObjectOfType<GameSession>();
         durationOfConfusion = gameSession.GetDurationOfEnemyConfusion();
         //gameSession.
-       // healthBar = transform.GetComponentInChildren<HealthBar>();
-        //healthBar.SetMaxValue(health);
+        healthBar = transform.GetComponentInChildren<HealthBar>();
+        if (tag == "Enemy Boss")
+            health = health * 3;
+        healthBar.SetMaxValue(health);
 
     }
 
     // Update is called once per frame
     void Update()
     {
-       /* if(isReadyToBeAttacked && !player.GetIsPlayerMoving() && !hadEnemyBeenAttacked)
-        {
-            isReadyToBeAttacked = false;
-            hadEnemyBeenAttacked = true;
-            player.AttackEnemy(transform);
-        }*/
-        /*
-        if(isReadyToBeAttacked && !player.GetIsPlayerMoving() && !hasEnemyBeenAttacked)
-        {
-            isReadyToBeAttacked = false;
-            hasEnemyBeenAttacked = true;
-            gameSession.AddEnemiesToBeAttacked(gameObject);
-        }*/
-        /*
+       
+        
         if(isHealthTriggered)
         {
             health -= Time.deltaTime;
@@ -80,7 +72,7 @@ public class EnemyController : MonoBehaviour
             {
                 isHealthTriggered = false;
             }
-        }*/
+        }
 
         if (agent.enabled && !isConfused)
         {

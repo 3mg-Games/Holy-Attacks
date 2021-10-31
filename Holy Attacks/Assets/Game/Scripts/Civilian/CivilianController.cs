@@ -271,4 +271,15 @@ public class CivilianController : MonoBehaviour
        // target = null;
         //isCivilianAttacking = true;
     }
+
+    public void Win()
+    {
+       
+        followPlayer = false;
+        isCivilianAttacking = false;
+        agent.isStopped = true;
+        agent.enabled = false;
+
+        animator.SetTrigger("Win");
+    }
 }
