@@ -83,7 +83,7 @@ Material:
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _Shininess: 0
-    - _Smoothness: 0
+    - _Smoothness: 0.063
     - _SmoothnessSource: 1
     - _SmoothnessTextureChannel: 0
     - _SpecSource: 0
@@ -93,10 +93,10 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 0.972549, g: 0.12549013, b: 0.25239757, a: 0}
+    - _BaseColor: {r: 0.972549, g: 0.12548718, b: 0.25239444, a: 0.063}
     - _Color: {r: 0.972549, g: 0.12549019, b: 0.25239763, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _SpecColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
+    - _SpecColor: {r: 0.9528302, g: 0.43147027, b: 0.43147027, a: 0.5}
 --- !u!114 &8313553170238563195
 MonoBehaviour:
   m_ObjectHideFlags: 11

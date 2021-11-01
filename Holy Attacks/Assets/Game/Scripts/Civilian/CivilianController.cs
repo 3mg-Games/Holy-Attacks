@@ -8,6 +8,7 @@ public class CivilianController : MonoBehaviour
     [SerializeField] NavMeshAgent agent;
     [SerializeField] Animator animator;
     [SerializeField] GameObject poofVfx;
+    [SerializeField] GameObject plus1Vfx;
     float waitTimeBeforeConversion;
 
     IEnumerator co = null;
@@ -129,7 +130,8 @@ public class CivilianController : MonoBehaviour
 
         waitTimer = waitTimeBeforeConversion;
         civilianWait.SetMaxValue(waitTimer);
-        civilianWait.gameObject.transform.GetChild(0).gameObject.SetActive(false);
+        
+
     }
    
 
@@ -154,6 +156,17 @@ public class CivilianController : MonoBehaviour
         agent.stoppingDistance += followerSpacingInc * currFollowerCount;
 
         civilianStoppingDistanceFromPlayer = agent.stoppingDistance;
+
+        // p = gameObject.transform.position;
+        // pos = new Vector3(p.x, p.y + 2f, p.z);
+
+        //pos = new Vector3(pos.x, pos.y + 2f, pos.z);
+        GameObject plusOne = Instantiate(plus1Vfx, transform.position, Quaternion.identity, this.transform);
+        //plusOne.transform.parent = transform;
+        plusOne.transform.localPosition = new Vector3(0, 2.5f, 0);
+        plusOne.transform.parent = null;
+        plusOne.GetComponent<Animator>().enabled = true;
+        Destroy(plusOne, 1f);
 
         //this.material = material;
         /*SkinnedMeshRenderer rend = transform.GetChild(1).gameObject.GetComponent<SkinnedMeshRenderer>();

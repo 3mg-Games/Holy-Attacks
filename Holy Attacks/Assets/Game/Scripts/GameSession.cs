@@ -18,6 +18,7 @@ public class GameSession : MonoBehaviour
     [SerializeField] int numOfFollowersNeededToEliminateBoss = 3;
     [SerializeField] TextMeshProUGUI spellText;
     [SerializeField] int totalSpell = 3;
+    [SerializeField] GameObject minusOneVfx;
     public float civilianWaitTimeBeforeConversion = 1f;
    
          
@@ -28,7 +29,7 @@ public class GameSession : MonoBehaviour
 
     bool isZoomedOut = false;
 
-     int numFollowers;
+     public int numFollowers;
     List<GameObject> followers = new List<GameObject>();
 
      int numEnemiesToBeAttacked;
@@ -45,6 +46,8 @@ public class GameSession : MonoBehaviour
 
     int numEnemies = 0;
     int numSpellRemaining;
+
+    bool isBug = true;
     // Start is called before the first frame update
     void Awake()
     {
@@ -127,11 +130,39 @@ public class GameSession : MonoBehaviour
         IncrementNumFollowers();
     }
 
-    public void RemoveFollower(GameObject follower)
+    private void RemoveFollower(GameObject follower)
     {
-        followers.Remove(follower);
-        DecrementNumFollowers();
-        Destroy(follower);
+        if (!isBug)
+        {
+            // Debug.Log("bahenchod");
+            if (follower != null)
+            {
+
+                //var p = follower.transform.position;
+                //Vector3 pos = new Vector3(p.x, p.y + 2f, p.z);
+
+                GameObject minusOne = Instantiate(minusOneVfx, follower.transform.position, Quaternion.identity, follower.transform);
+                //plusOne.transform.parent = transform;
+                minusOne.transform.localPosition = new Vector3(0, 2.5f, 0);
+                minusOne.transform.parent = null;
+                minusOne.GetComponent<Animator>().enabled = true;
+                Destroy(minusOne, 1f);
+
+                //GameObject minusOne = Instantiate(minusOneVfx, pos, Quaternion.identity);
+                //Destroy(minusOne, 1f);
+
+
+                followers.Remove(follower);
+                DecrementNumFollowers();
+
+
+
+                Destroy(follower);
+            }
+        }
+
+        else
+            isBug = false;
     }
 
     public float GetFollowerSpacingIncrement()
