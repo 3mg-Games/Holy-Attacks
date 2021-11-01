@@ -6161,18 +6161,6 @@ Transform:
   m_Father: {fileID: 1991005273}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &291402678 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2929252283123773937, guid: aaa2c939c0359ac4dbce3f49e8b90252,
-    type: 3}
-  m_PrefabInstance: {fileID: 120417820}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &294466006
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21731,9 +21719,9 @@ MonoBehaviour:
   waitTimeBeforeAttack: 0.2
   touchSensitivity: 0.1
   joystickImages:
-  - {fileID: 291402678}
-  - {fileID: 2072719523}
-  joystickInActionColor: {r: 1, g: 1, b: 1, a: 0}
+  - {fileID: 647212130}
+  - {fileID: 96634376}
+  joystickInActionColor: {r: 1, g: 1, b: 1, a: 1}
   joystickNotInActionColor: {r: 1, g: 1, b: 1, a: 0}
   shockWave: {fileID: 6212195607464422148, guid: 1e90a7bb807205a40b990214fe3a76de,
     type: 3}
@@ -49214,18 +49202,6 @@ Transform:
   m_Father: {fileID: 1537596773}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2072719523 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2929252285020698103, guid: aaa2c939c0359ac4dbce3f49e8b90252,
-    type: 3}
-  m_PrefabInstance: {fileID: 120417820}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2074349328
 GameObject:
   m_ObjectHideFlags: 0
