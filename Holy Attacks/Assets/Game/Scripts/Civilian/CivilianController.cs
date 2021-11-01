@@ -7,9 +7,11 @@ public class CivilianController : MonoBehaviour
 {
     [SerializeField] NavMeshAgent agent;
     [SerializeField] Animator animator;
+    [SerializeField] GameObject poofVfx;
+    float waitTimeBeforeConversion;
 
     IEnumerator co = null;
-   
+    IEnumerator corutine = null;
 
     Transform target, playerTarget;
     bool followPlayer = false;
@@ -24,6 +26,11 @@ public class CivilianController : MonoBehaviour
     bool isCivilianHasting = false;
     float hasteTimer = 0f;
     float civilianInitialSpeed;
+
+    CivilianWait civilianWait;
+
+    float waitTimer;
+    bool isCivilianWaiting = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -32,13 +39,28 @@ public class CivilianController : MonoBehaviour
         agentInitialStoppingDistance = agent.stoppingDistance;
         civilianInitialSpeed = agent.speed;
 
+        waitTimer = waitTimeBeforeConversion = gameSession.civilianWaitTimeBeforeConversion;
         
+        civilianWait =  GetComponentInChildren<CivilianWait>();
+        civilianWait.SetMaxValue(waitTimer);
         // material = this.transform.GetChild(0).gameObject.GetComponent<SkinnedMeshRenderer>().material;
     }
 
     // Update is called once per frame
     void Update()
     {
+
+        if(isCivilianWaiting)
+        {
+            waitTimer -= Time.deltaTime;
+            civilianWait.SetValue(waitTimer);
+
+            if(waitTimer <= 0f)
+            {
+                isCivilianWaiting = false;
+            }
+        }
+
         if(isCivilianHasting)
         {
             hasteTimer -= Time.deltaTime;
@@ -88,11 +110,39 @@ public class CivilianController : MonoBehaviour
         }
     }
 
+    public void StartConversion(Transform transform, Material material)
+    {
+        corutine = SetTarget(transform, material);
+
+        civilianWait.gameObject.transform.GetChild(0).gameObject.SetActive(true);
+
+        isCivilianWaiting = true;
+        StartCoroutine(corutine);
+    }
+
+    public void StopConversion()
+    {
+        StopCoroutine(corutine);
+        
+
+        isCivilianWaiting = false;
+
+        waitTimer = waitTimeBeforeConversion;
+        civilianWait.SetMaxValue(waitTimer);
+        civilianWait.gameObject.transform.GetChild(0).gameObject.SetActive(false);
+    }
    
 
-    public void SetTarget(Transform transform, Material material)
+    private IEnumerator SetTarget(Transform transform, Material material)
     {
-        
+
+        yield return new WaitForSeconds(waitTimeBeforeConversion);
+
+        var p = gameObject.transform.position;
+        Vector3 pos = new Vector3(p.x, p.y + 1f, p.z);
+
+        GameObject poof = Instantiate(poofVfx, pos, Quaternion.identity);
+        Destroy(poof, 1.5f);
         this.transform.GetChild(0).gameObject.GetComponent<SkinnedMeshRenderer>().material = material;
 
         playerTarget= target = transform;

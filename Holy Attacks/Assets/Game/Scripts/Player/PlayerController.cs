@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float movementSpeed = 10f;
     [SerializeField] SpriteRenderer playerRadius;
     [SerializeField] Animator animator;
+    [SerializeField] LayerMask layer;
 
     [SerializeField] GameObject projectilePrefab;
     [SerializeField] float projectileForce = 10f;
@@ -95,6 +96,13 @@ public class PlayerController : MonoBehaviour
     GameSession gameSession;
     bool areSpellRemaining = true;
 
+    float moveHorizontal, moveVertical;
+
+    float initialMoveSpeed;
+
+    bool isBoundary = false;
+
+    //Vector3 
     //Vector3 fakeJoystickOuterCircleInitialPos, fakeJoystickButtonInitialPos;
     // Start is called before the first frame update
     void Start()
@@ -109,6 +117,7 @@ public class PlayerController : MonoBehaviour
         playerInitialSpeed = movementSpeed;
 
         gameSession = FindObjectOfType<GameSession>();
+        initialMoveSpeed = movementSpeed;
         //fakeJoystickOuterCircleInitialPos = fakeJoystickOuterCircle.position;
         //fakeJoystickButtonInitialPos = fakeJoystickButton.position;
        // joystickImages = joystick.gameObject.GetComponentsInChildren<Image>();
@@ -162,8 +171,8 @@ public class PlayerController : MonoBehaviour
 
         if (isGamePlaying)
         {
-            float moveHorizontal = joystick.Horizontal; //Input.GetAxis("Horizontal");
-            float moveVertical = joystick.Vertical; // Input.GetAxis("Vertical");
+            moveHorizontal = joystick.Horizontal; //Input.GetAxis("Horizontal");
+             moveVertical = joystick.Vertical; // Input.GetAxis("Vertical");
             
             // float mH = fakeJoystick.Horizontal;
             // float mV = fakeJoystick.Vertical;
@@ -357,6 +366,32 @@ public class PlayerController : MonoBehaviour
             if (isPlayerMoving)
                 transform.rotation = Quaternion.LookRotation(movement);
 
+            if(isBoundary)
+            {
+                RaycastHit hit;
+                
+
+                if (Physics.Raycast(transform.position, transform.forward, out hit, 2f, layer))
+                {
+                    if (hit.transform.gameObject.tag == "Boundary")
+                    {
+                        //if (hit.transform.tag == "Boundary")
+                        //{
+                        movementSpeed = 0f;
+                     //   Debug.Log("Boundary sdf sdf sd");
+                        //  }
+
+                        //  Debug.Log(hit.collider.isTrigger.Equals("dfsdf"));
+                    }
+
+                }
+                else
+                {
+                    movementSpeed = initialMoveSpeed;
+                    isBoundary = false;
+                }
+            }
+
 
             transform.Translate(movement * movementSpeed * Time.deltaTime, Space.World);
 
@@ -366,6 +401,8 @@ public class PlayerController : MonoBehaviour
 
         }
     }
+
+
 
     
     public void PlayerHaste(float percentageInc, float hasteTime)
@@ -465,7 +502,27 @@ public class PlayerController : MonoBehaviour
         isGamePlaying = false;
     }
 
-    
+
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "Boundary")
+        {
+            //Debug.Log("dsf");
+            //  movementSpeed = 0f;
+            isBoundary = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        //if(other.tag == "")
+        if (other.tag == "Boundary")
+        {
+            isBoundary = false;
+        }
+    }
+
 
 }
 

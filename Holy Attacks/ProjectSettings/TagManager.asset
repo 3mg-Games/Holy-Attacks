@@ -11,6 +11,8 @@ TagManager:
   - Water
   - PowerUp
   - Enemy Boss
+  - FxTemporaire
+  - Boundary
   layers:
   - Default
   - TransparentFX
@@ -25,7 +27,7 @@ TagManager:
   - Obstacles
   - Player Radius
   - PowerUp
-  - 
+  - Boundary
   - 
   - 
   - 

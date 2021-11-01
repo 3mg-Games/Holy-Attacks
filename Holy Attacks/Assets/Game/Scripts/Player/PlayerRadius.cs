@@ -5,11 +5,14 @@ using UnityEngine;
 public class PlayerRadius : MonoBehaviour
 {
     [SerializeField] SkinnedMeshRenderer renderer;
-    [SerializeField] GameObject poofVfx;
-    [SerializeField] float poofVfxduration = 1.5f;
+   // [SerializeField] GameObject poofVfx;
+    //[SerializeField] float poofVfxduration = 1.5f;
+    //[SerializeField] float civilianConversionWaitTime = 1f;
     Material material;
 
     GameSession gameSession;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,9 +37,9 @@ public class PlayerRadius : MonoBehaviour
             {
                 var p = other.gameObject.transform.position;
                 Vector3 pos = new Vector3(p.x, p.y + 1f, p.z);
-                GameObject poof = Instantiate(poofVfx, pos, Quaternion.identity);
-                Destroy(poof, poofVfxduration);
-                other.GetComponent<CivilianController>().SetTarget(transform.parent.transform, material);
+                //GameObject poof = Instantiate(poofVfx, pos, Quaternion.identity);
+               // Destroy(poof, poofVfxduration);
+                other.GetComponent<CivilianController>().StartConversion(transform.parent.transform, material);
             }
         }
 
@@ -44,5 +47,22 @@ public class PlayerRadius : MonoBehaviour
         
     }
 
-    
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.tag == "Civilian")
+        {
+            int idx = gameSession.GetFollowerNumber(other.gameObject) - 1;
+            if (idx == -1)
+            {
+                var p = other.gameObject.transform.position;
+                Vector3 pos = new Vector3(p.x, p.y + 1f, p.z);
+                //GameObject poof = Instantiate(poofVfx, pos, Quaternion.identity);
+                // Destroy(poof, poofVfxduration);
+                other.GetComponent<CivilianController>().StopConversion();
+            }
+        }
+    }
+
+
 }

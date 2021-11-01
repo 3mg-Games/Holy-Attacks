@@ -18,6 +18,10 @@ public class GameSession : MonoBehaviour
     [SerializeField] int numOfFollowersNeededToEliminateBoss = 3;
     [SerializeField] TextMeshProUGUI spellText;
     [SerializeField] int totalSpell = 3;
+    public float civilianWaitTimeBeforeConversion = 1f;
+   
+         
+
 
     [SerializeField] GameObject continueButton;
     //[SerializeField] float dist
@@ -49,7 +53,7 @@ public class GameSession : MonoBehaviour
         i = 0;
         numSpellRemaining = totalSpell;
         spellText.text = numSpellRemaining.ToString();
-        
+        //civilianWaitTimeBeforeConversion = 
     }
 
     private void Start()
