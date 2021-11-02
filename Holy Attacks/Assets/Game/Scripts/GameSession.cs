@@ -48,6 +48,8 @@ public class GameSession : MonoBehaviour
     int numSpellRemaining;
 
     bool isBug = true;
+
+    SceneLoader sceneLoader;
     // Start is called before the first frame update
     void Awake()
     {
@@ -56,12 +58,14 @@ public class GameSession : MonoBehaviour
         i = 0;
         numSpellRemaining = totalSpell;
         spellText.text = numSpellRemaining.ToString();
+        
         //civilianWaitTimeBeforeConversion = 
     }
 
     private void Start()
     {
         player = FindObjectOfType<PlayerController>();
+        sceneLoader = FindObjectOfType<SceneLoader>();
     }
     /*
     public void AddOnStayFollower(GameObject follower)
@@ -290,7 +294,7 @@ public class GameSession : MonoBehaviour
     public void Continue()
     {
         //Scenemange
-        SceneManager.LoadScene(0);
+        sceneLoader.LoadParticularLevel(0);
     }
 
     private IEnumerator MobAttack()

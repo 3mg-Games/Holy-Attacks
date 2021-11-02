@@ -23,6 +23,11 @@ public class SceneLoader : MonoBehaviour
         }*/
     }
 
+    public void LoadParticularLevel(int levelIdx)
+    {
+        StartCoroutine(LoadLevel(levelIdx));
+    }
+
     public void LoadNextLevel()
     {
         StartCoroutine(LoadLevel(SceneManager.GetActiveScene().buildIndex + 1));
