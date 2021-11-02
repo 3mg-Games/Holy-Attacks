@@ -140,6 +140,9 @@ public class CivilianController : MonoBehaviour
 
         yield return new WaitForSeconds(waitTimeBeforeConversion);
 
+        this.transform.GetChild(4).gameObject.SetActive(false);
+        this.transform.GetChild(0).gameObject.SetActive(true);
+
         var p = gameObject.transform.position;
         Vector3 pos = new Vector3(p.x, p.y + 1f, p.z);
 
