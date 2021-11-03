@@ -8,6 +8,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] Animator animator;
     [SerializeField] NavMeshAgent agent;
     [SerializeField] GameObject confused;
+    [SerializeField] int numOfFollowersToEliminateEnemy = 1;
 
     float durationOfConfusion = 3f;
 
@@ -53,7 +54,7 @@ public class EnemyController : MonoBehaviour
         //gameSession.
         healthBar = transform.GetComponentInChildren<HealthBar>();
         if (tag == "Enemy Boss")
-            health = health * 3;
+            health = health * numOfFollowersToEliminateEnemy;
         healthBar.SetMaxValue(health);
 
     }
@@ -157,6 +158,7 @@ public class EnemyController : MonoBehaviour
             {
                 isReadyToBeAttacked = true;
                 gameSession.AddEnemiesToBeAttacked(gameObject);
+            Debug.Log("Enemy added");
             }
 
             if (!isEnemyAttacking && other.tag == "Civilian" && !isConfused)
@@ -250,7 +252,15 @@ public class EnemyController : MonoBehaviour
 
 
 
+    public int GetNumOfFollowersNeededToEliminateEnemy()
+    {
+        return numOfFollowersToEliminateEnemy;
+    }
 
+    public void DecNumOfFollowersNeededToEliminateEnemy()
+    {
+        numOfFollowersToEliminateEnemy--;
+    }
 
 
 }

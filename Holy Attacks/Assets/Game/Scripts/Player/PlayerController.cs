@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
   //  [SerializeField] CharacterController controller;
     [SerializeField] float movementSpeed = 10f;
     [SerializeField] SpriteRenderer playerRadius;
+    [SerializeField] SpriteRenderer attackRadius;
     [SerializeField] Animator animator;
     [SerializeField] LayerMask layer;
 
@@ -42,6 +43,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Animator staffAnimator;
 
     [SerializeField] GameObject tutorial;
+
+
     bool isTutorail = true;
 
     
@@ -249,7 +252,9 @@ public class PlayerController : MonoBehaviour
             {
 
                 isPlayerMoving = false;
-                playerRadius.enabled = true;
+                //playerRadius.enabled = true;
+                attackRadius.enabled = false;
+               // playerRadius.gameObject.SetActive(true);
                 animator.SetBool("Run", false);
                 ActivateJoystickUi(false);
 
@@ -277,7 +282,10 @@ public class PlayerController : MonoBehaviour
             else
             {
                 isPlayerMoving = true;
-                playerRadius.enabled = false;
+              //  playerRadius.enabled = false;
+                //playerRadius.gameObject.SetActive(false);
+                attackRadius.enabled = true;
+
                 timer = waitTimeBeforeAttack;
                 animator.SetBool("Run", true);
                 ActivateJoystickUi(true);
@@ -450,6 +458,12 @@ public class PlayerController : MonoBehaviour
         areSpellRemaining = val;
     }
 
+    private void DeactivateSpell()
+    {
+
+        shockWaveImage.gameObject.SetActive(false);
+    }
+
     public void DeactivateGlow(bool val)
     {
         if (val)
@@ -500,6 +514,7 @@ public class PlayerController : MonoBehaviour
     {
         animator.SetTrigger("Win");
         isGamePlaying = false;
+        DeactivateSpell();
     }
 
 

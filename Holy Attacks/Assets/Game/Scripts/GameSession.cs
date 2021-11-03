@@ -15,7 +15,7 @@ public class GameSession : MonoBehaviour
     [SerializeField] GameObject resume;
     [SerializeField] CinemachineVirtualCamera originalCam;
     [SerializeField] float durationOfEnemyConfusion = 3f;
-    [SerializeField] int numOfFollowersNeededToEliminateBoss = 3;
+  //  [SerializeField] int numOfFollowersNeededToEliminateBoss = 3;
     [SerializeField] TextMeshProUGUI spellText;
     [SerializeField] int totalSpell = 3;
     [SerializeField] GameObject minusOneVfx;
@@ -113,13 +113,13 @@ public class GameSession : MonoBehaviour
     {
         numOfFollowersText.text = numFollowers.ToString();
 
-       
 
+        //Debug.Log(numEnemiesToBeAttacked);
         if (numEnemiesToBeAttacked > 0 && !isMobAttacking && !player.GetIsPlayerMoving())  //remove numEnemeiestobeattacked
         {
             isMobAttacking = true;
             StartCoroutine(MobAttack());
-           // Debug.Log("mob attacking");
+            Debug.Log("mob attacking");
         }
     }
 
@@ -136,8 +136,8 @@ public class GameSession : MonoBehaviour
 
     private void RemoveFollower(GameObject follower)
     {
-        if (!isBug)
-        {
+        //if (!isBug)
+        //{
             // Debug.Log("bahenchod");
             if (follower != null)
             {
@@ -163,10 +163,10 @@ public class GameSession : MonoBehaviour
 
                 Destroy(follower);
             }
-        }
+       // }
 
-        else
-            isBug = false;
+        //else
+           // isBug = false;
     }
 
     public float GetFollowerSpacingIncrement()
@@ -193,33 +193,40 @@ public class GameSession : MonoBehaviour
 
     public void AddEnemiesToBeAttacked(GameObject target)
     {
-        enemiesToBeAttacked.Add(target);
-        numEnemiesToBeAttacked++;
+        if (target != null)
+        {
+            enemiesToBeAttacked.Add(target);
+            numEnemiesToBeAttacked++;
+        }
     }
 
     
 
     public void RemoveEnemyFromList(GameObject target, bool exit)
     {
-        enemiesToBeAttacked.Remove(target);
-        numEnemiesToBeAttacked--;
-
-        if (exit)
+        Debug.Log(target.name);
+        if (target != null)
         {
-            if (numEnemiesToBeAttacked <= 0)
+            enemiesToBeAttacked.Remove(target);
+            numEnemiesToBeAttacked--;
+
+            if (exit)
             {
-                foreach (GameObject follower in followers)
+                if (numEnemiesToBeAttacked <= 0)
                 {
-                    follower.GetComponent<CivilianController>().SetTargetASPlayer();
+                    foreach (GameObject follower in followers)
+                    {
+                        follower.GetComponent<CivilianController>().SetTargetASPlayer();
+                    }
+                }
+
+                else if (!player.GetIsPlayerMoving())
+                {
+                    StartCoroutine(MobAttack());
                 }
             }
 
-            else if(!player.GetIsPlayerMoving())
-            {
-                StartCoroutine(MobAttack());
-            }
         }
-
         
     }
 
@@ -236,8 +243,9 @@ public class GameSession : MonoBehaviour
 
     public void KillEnemy(GameObject target)
     {
+        EnemyController enemy = target.GetComponent<EnemyController>();
         // add extra code for boss here
-        if(!(target.tag == "Enemy Boss"))
+        if (!(target.tag == "Enemy Boss"))
         {
             RemoveEnemyFromList(target, false);
 
@@ -246,11 +254,13 @@ public class GameSession : MonoBehaviour
 
         else
         {
-            Debug.Log("Boss");
-            numOfFollowersNeededToEliminateBoss--;
+            // Debug.Log("Boss");
+            //numOfFollowersNeededToEliminateBoss--;   // new code
+           
+            enemy.DecNumOfFollowersNeededToEliminateEnemy();
             SetFollowersToNull();
 
-            if(numOfFollowersNeededToEliminateBoss <= 0)
+            if(enemy.GetNumOfFollowersNeededToEliminateEnemy() <= 0) // new code
             {
                 RemoveEnemyFromList(target, false);
 
@@ -264,11 +274,11 @@ public class GameSession : MonoBehaviour
         RemoveFollower(closestFollower);
 
         if(!(target.tag == "Enemy Boss"))
-        Destroy(target);
+            Destroy(target);
 
         else
         {
-            if (numOfFollowersNeededToEliminateBoss <= 0)
+            if (enemy.GetNumOfFollowersNeededToEliminateEnemy() <= 0)   
             {
                 Destroy(target);
                 Win();
