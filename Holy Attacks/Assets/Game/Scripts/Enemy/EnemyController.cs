@@ -41,6 +41,7 @@ public class EnemyController : MonoBehaviour
     //float initialHealth;
 
     bool isHealthTriggered = false;
+    bool isBoss = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -54,15 +55,19 @@ public class EnemyController : MonoBehaviour
         //gameSession.
         healthBar = transform.GetComponentInChildren<HealthBar>();
         if (tag == "Enemy Boss")
+        {
             health = health * numOfFollowersToEliminateEnemy;
+            isBoss = true;
+        }
         healthBar.SetMaxValue(health);
+
+        
 
     }
 
     // Update is called once per frame
     void Update()
     {
-       
         
         if(isHealthTriggered)
         {

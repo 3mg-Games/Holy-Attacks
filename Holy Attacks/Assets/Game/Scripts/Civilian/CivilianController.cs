@@ -46,6 +46,8 @@ public class CivilianController : MonoBehaviour
         
         civilianWait =  GetComponentInChildren<CivilianWait>();
         civilianWait.SetMaxValue(waitTimer);
+
+        agent.enabled = false;
         // material = this.transform.GetChild(0).gameObject.GetComponent<SkinnedMeshRenderer>().material;
     }
 
