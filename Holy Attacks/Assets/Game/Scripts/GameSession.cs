@@ -19,6 +19,7 @@ public class GameSession : MonoBehaviour
     [SerializeField] TextMeshProUGUI spellText;
     [SerializeField] int totalSpell = 3;
     [SerializeField] GameObject minusOneVfx;
+    [SerializeField] GameObject poofVfx;
     public float civilianWaitTimeBeforeConversion = 1f;
    
          
@@ -281,7 +282,24 @@ public class GameSession : MonoBehaviour
             if (enemy.GetNumOfFollowersNeededToEliminateEnemy() <= 0)   
             {
                 Destroy(target);
+                KillAllEnemies();
                 Win();
+            }
+        }
+    }
+
+    private void KillAllEnemies()
+    {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach(GameObject enemy in enemies)
+        {
+            if (enemy != null)
+            {
+                var p = enemy.transform.position;
+                var pos = new Vector3(p.x, p.y + 1f, p.z);
+                GameObject poof = Instantiate(poofVfx, pos, Quaternion.identity);
+                Destroy(poof, 1.5f);
+                Destroy(enemy);
             }
         }
     }

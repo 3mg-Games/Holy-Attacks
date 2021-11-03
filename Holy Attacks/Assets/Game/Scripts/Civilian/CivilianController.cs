@@ -145,8 +145,9 @@ public class CivilianController : MonoBehaviour
 
         radius.enabled = false;
 
-        this.transform.GetChild(4).gameObject.SetActive(false);
+        this.transform.GetChild(5).gameObject.SetActive(false);
         this.transform.GetChild(0).gameObject.SetActive(true);
+        this.transform.GetChild(1).gameObject.SetActive(true);
 
 
         var p = gameObject.transform.position;
@@ -154,7 +155,7 @@ public class CivilianController : MonoBehaviour
 
         GameObject poof = Instantiate(poofVfx, pos, Quaternion.identity);
         Destroy(poof, 1.5f);
-        this.transform.GetChild(0).gameObject.GetComponent<SkinnedMeshRenderer>().material = material;
+        //this.transform.GetChild(0).gameObject.GetComponent<SkinnedMeshRenderer>().material = material;
 
         playerTarget= target = transform;
         followPlayer = true;
