@@ -147,6 +147,8 @@ public class CivilianController : MonoBehaviour
 
         radius.enabled = false;
 
+        agent.enabled = true;
+
         this.transform.GetChild(5).gameObject.SetActive(false);
         this.transform.GetChild(0).gameObject.SetActive(true);
         this.transform.GetChild(1).gameObject.SetActive(true);
@@ -342,7 +344,9 @@ public class CivilianController : MonoBehaviour
 
     public void SetTargetAsNull()
     {
+        if(co != null)
         StopCoroutine(co);
+        co = null;
        // target = null;
         //isCivilianAttacking = true;
     }

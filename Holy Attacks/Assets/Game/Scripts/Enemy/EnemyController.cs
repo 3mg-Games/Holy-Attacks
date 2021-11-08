@@ -9,6 +9,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] NavMeshAgent agent;
     [SerializeField] GameObject confused;
     [SerializeField] int numOfFollowersToEliminateEnemy = 1;
+    [SerializeField] float baseHealth = 2f;
 
     float durationOfConfusion = 3f;
 
@@ -42,23 +43,27 @@ public class EnemyController : MonoBehaviour
 
     bool isHealthTriggered = false;
     bool isBoss = false;
+    float bossMarker = 0;
     // Start is called before the first frame update
     void Start()
     {
 
         timer = timerIniitalVal;
         timerDecrementVal = 0.4f;
-       agent.enabled = false;
-       player = FindObjectOfType<PlayerController>().GetComponent<PlayerController>();
-       gameSession = FindObjectOfType<GameSession>();
+        agent.enabled = false;
+        player = FindObjectOfType<PlayerController>().GetComponent<PlayerController>();
+        gameSession = FindObjectOfType<GameSession>();
         durationOfConfusion = gameSession.GetDurationOfEnemyConfusion();
         //gameSession.
         healthBar = transform.GetComponentInChildren<HealthBar>();
+        health = baseHealth;
         if (tag == "Enemy Boss")
         {
             health = health * numOfFollowersToEliminateEnemy;
+            bossMarker = health - baseHealth;
             isBoss = true;
         }
+
         healthBar.SetMaxValue(health);
 
         
@@ -99,26 +104,35 @@ public class EnemyController : MonoBehaviour
                     isHealthTriggered = true;
                     hasEnemyStopped = true;
                     
-                    if(timer <= 0f)
+                    if(isBoss)
                     {
-                        if (tag == "Enemy Boss")
+                        //code for timer
+
+                        if (timer <= 0f)
                         {
+                            //bossMarker = health - baseHealth;
                             timerIniitalVal = timerIniitalInitialVal;
                             timer = timerIniitalVal;
 
+                            KillFollower();
                             Debug.Log("I am booss");
                             GameObject newTar = gameSession.GetNewFollower(gameObject);
                             animator.SetBool("Punch", false);
-                            agent.isStopped = false;
-                            SetTarget(newTar);
 
-                            KillFollower();
+                            if (agent.enabled)
+                            {
+                                agent.isStopped = false;
+                                SetTarget(newTar);
+                            }
+
+                           
                         }
-
-
-                        else
-                            KillFollower();
                     }
+
+
+                    else if(timer <= 0f)
+                          KillFollower();
+                    
                     //enemyAttack = StartCoroutine(KillFollower());
                 }
 

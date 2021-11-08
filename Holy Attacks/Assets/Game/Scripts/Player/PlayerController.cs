@@ -105,6 +105,8 @@ public class PlayerController : MonoBehaviour
 
     bool isBoundary = false;
 
+    GameObject[] civilians;
+
     //Vector3 
     //Vector3 fakeJoystickOuterCircleInitialPos, fakeJoystickButtonInitialPos;
     // Start is called before the first frame update
@@ -121,6 +123,8 @@ public class PlayerController : MonoBehaviour
 
         gameSession = FindObjectOfType<GameSession>();
         initialMoveSpeed = movementSpeed;
+
+        civilians = GameObject.FindGameObjectsWithTag("Civilian");
         //fakeJoystickOuterCircleInitialPos = fakeJoystickOuterCircle.position;
         //fakeJoystickButtonInitialPos = fakeJoystickButton.position;
        // joystickImages = joystick.gameObject.GetComponentsInChildren<Image>();
@@ -254,6 +258,7 @@ public class PlayerController : MonoBehaviour
                 isPlayerMoving = false;
                 //playerRadius.enabled = true;
                 attackRadius.enabled = false;
+                ActivateCivilianRadius(true);
                // playerRadius.gameObject.SetActive(true);
                 animator.SetBool("Run", false);
                 ActivateJoystickUi(false);
@@ -285,6 +290,7 @@ public class PlayerController : MonoBehaviour
               //  playerRadius.enabled = false;
                 //playerRadius.gameObject.SetActive(false);
                 attackRadius.enabled = true;
+                ActivateCivilianRadius(false);
 
                 timer = waitTimeBeforeAttack;
                 animator.SetBool("Run", true);
@@ -535,6 +541,18 @@ public class PlayerController : MonoBehaviour
         if (other.tag == "Boundary")
         {
             isBoundary = false;
+        }
+    }
+
+    private void ActivateCivilianRadius(bool activate)
+    {
+        foreach(GameObject civilian in civilians)
+        {
+            if (civilian != null)
+            {
+                GameObject radius = civilian.transform.GetChild(3).gameObject;
+                radius.SetActive(activate);
+            }
         }
     }
 
