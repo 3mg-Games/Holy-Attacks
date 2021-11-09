@@ -11,6 +11,8 @@ public class CivilianController : MonoBehaviour
     [SerializeField] GameObject poofVfx;
     [SerializeField] GameObject plus1Vfx;
     [SerializeField] SpriteRenderer radius;
+    [SerializeField] Color radiusActive;
+    [SerializeField] Color radiusInActive;
     float waitTimeBeforeConversion;
 
     IEnumerator co = null;
@@ -48,6 +50,7 @@ public class CivilianController : MonoBehaviour
         civilianWait.SetMaxValue(waitTimer);
 
         agent.enabled = false;
+        radius.color = radiusInActive;
         // material = this.transform.GetChild(0).gameObject.GetComponent<SkinnedMeshRenderer>().material;
     }
 
@@ -57,6 +60,7 @@ public class CivilianController : MonoBehaviour
 
         if(isCivilianWaiting)
         {
+            radius.color = radiusActive;
             waitTimer -= Time.deltaTime;
             civilianWait.SetValue(waitTimer);
 
@@ -122,6 +126,7 @@ public class CivilianController : MonoBehaviour
         corutine = SetTarget(transform, material);
 
         civilianWait.gameObject.transform.GetChild(0).gameObject.SetActive(true);
+        radius.color = radiusActive;
 
         isCivilianWaiting = true;
         StartCoroutine(corutine);
@@ -130,7 +135,7 @@ public class CivilianController : MonoBehaviour
     public void StopConversion()
     {
         StopCoroutine(corutine);
-        
+        radius.color = radiusInActive;
 
         isCivilianWaiting = false;
 
@@ -144,7 +149,7 @@ public class CivilianController : MonoBehaviour
 
     private IEnumerator SetTarget(Transform transform, Material material)
     {
-
+        
         yield return new WaitForSeconds(waitTimeBeforeConversion);
 
         radius.enabled = false;
