@@ -62,7 +62,9 @@ public class CivilianController : MonoBehaviour
 
             if(waitTimer <= 0f)
             {
+                
                 isCivilianWaiting = false;
+                civilianWait.gameObject.transform.GetChild(0).gameObject.SetActive(false);
             }
         }
 
