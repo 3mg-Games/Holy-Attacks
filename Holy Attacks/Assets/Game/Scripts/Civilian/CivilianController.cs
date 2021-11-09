@@ -61,6 +61,7 @@ public class CivilianController : MonoBehaviour
         if(isCivilianWaiting)
         {
             radius.color = radiusActive;
+            
             waitTimer -= Time.deltaTime;
             civilianWait.SetValue(waitTimer);
 
