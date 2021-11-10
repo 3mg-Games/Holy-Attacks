@@ -43,6 +43,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Animator staffAnimator;
 
     [SerializeField] GameObject tutorial;
+    [SerializeField] float rotateSpeed = 10f;
 
 
     bool isTutorail = true;
@@ -109,6 +110,8 @@ public class PlayerController : MonoBehaviour
     
     GameObject[] civilians;
 
+    bool isRotating = false;
+
     //Vector3 
     //Vector3 fakeJoystickOuterCircleInitialPos, fakeJoystickButtonInitialPos;
     // Start is called before the first frame update
@@ -151,6 +154,18 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(isRotating)
+        {
+            Quaternion currentRotation = transform.rotation;
+            Quaternion wantedRotation = Quaternion.Euler(0, 180, 0);
+            transform.rotation = Quaternion.RotateTowards(currentRotation, wantedRotation, Time.deltaTime * rotateSpeed);
+
+            if(transform.rotation == wantedRotation)
+            {
+                isRotating = false;
+                animator.SetTrigger("Win");
+            }
+        }
       
         if(playerHaste)
         {
@@ -539,10 +554,13 @@ public class PlayerController : MonoBehaviour
 
     public void Win()
     {
-        animator.SetTrigger("Win");
+        //animator.SetTrigger("Win");
         isGamePlaying = false;
         DeactivateSpell();
+        isRotating = true;
     }
+
+
 
 
 

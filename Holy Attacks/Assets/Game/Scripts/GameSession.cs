@@ -29,6 +29,7 @@ public class GameSession : MonoBehaviour
     [SerializeField] GameObject levelCompletePanel;
     [SerializeField] GameObject confettiL;
     [SerializeField] GameObject confettiR;
+    [SerializeField] AudioClip levelComplete;
     
     //[SerializeField] float dist
 
@@ -155,7 +156,7 @@ public class GameSession : MonoBehaviour
                 minusOne.transform.localPosition = new Vector3(0, 2.5f, 0);
                 minusOne.transform.parent = null;
                 minusOne.GetComponent<Animator>().enabled = true;
-                Destroy(minusOne, 1f);
+                Destroy(minusOne, 0.5f);
 
                 //GameObject minusOne = Instantiate(minusOneVfx, pos, Quaternion.identity);
                 //Destroy(minusOne, 1f);
@@ -312,15 +313,29 @@ public class GameSession : MonoBehaviour
     {
         player.Win();
 
-        foreach(GameObject follower in followers)
+        foreach (GameObject follower in followers)
         {
-            if(follower != null)
+            if (follower != null)
             {
                 follower.GetComponent<CivilianController>().Win();
             }
         }
+        originalCam.Priority = 1;
+        StartCoroutine(Win1());
+    }
+
+    private IEnumerator Win1()
+    {
+        yield return new WaitForSeconds(0.5f);
         confettiL.SetActive(true);
         confettiR.SetActive(true);
+        StartCoroutine(ActivatePanel());
+    }
+
+    private IEnumerator ActivatePanel()
+    {
+        AudioSource.PlayClipAtPoint(levelComplete, Camera.main.transform.position);
+        yield return new WaitForSeconds(2f);
         levelCompletePanel.SetActive(true);
         continueButton.SetActive(true);
     }

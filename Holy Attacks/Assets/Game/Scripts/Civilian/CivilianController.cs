@@ -14,6 +14,10 @@ public class CivilianController : MonoBehaviour
     [SerializeField] Color radiusActive;
     [SerializeField] Color radiusInActive;
     [SerializeField] GameObject sword;
+    [SerializeField] AudioClip boneCrumbleSfx;
+    [SerializeField] AudioClip skeletonSpawnSfx;
+    //[SerializeField] AudioClip swordsClankingSfx;
+    
     
     float waitTimeBeforeConversion;
 
@@ -38,6 +42,7 @@ public class CivilianController : MonoBehaviour
 
     float waitTimer;
     bool isCivilianWaiting = false;
+    AudioSource audioSource;
     
     // Start is called before the first frame update
     void Start()
@@ -54,6 +59,7 @@ public class CivilianController : MonoBehaviour
 
         agent.enabled = false;
         radius.color = radiusInActive;
+        audioSource = GetComponent<AudioSource>();
 
         
         // material = this.transform.GetChild(0).gameObject.GetComponent<SkinnedMeshRenderer>().material;
@@ -63,6 +69,7 @@ public class CivilianController : MonoBehaviour
     void Update()
     {
 
+        
         if(isCivilianWaiting)
         {
            // radius.color = radiusActive;
@@ -159,7 +166,7 @@ public class CivilianController : MonoBehaviour
     {
         
         yield return new WaitForSeconds(waitTimeBeforeConversion);
-
+        AudioSource.PlayClipAtPoint(skeletonSpawnSfx, Camera.main.transform.position);
         radius.enabled = false;
 
         agent.enabled = true;
@@ -195,7 +202,7 @@ public class CivilianController : MonoBehaviour
         plusOne.transform.localPosition = new Vector3(0, 2.5f, 0);
         plusOne.transform.parent = null;
         plusOne.GetComponent<Animator>().enabled = true;
-        Destroy(plusOne, 1f);
+        Destroy(plusOne, 0.5f);
         player.IsPlayerSummoning = false;
         //this.material = material;
         /*SkinnedMeshRenderer rend = transform.GetChild(1).gameObject.GetComponent<SkinnedMeshRenderer>();
@@ -293,6 +300,7 @@ public class CivilianController : MonoBehaviour
 
     private IEnumerator StartPunching(GameObject other, Collider otherCollider2)
     {
+        audioSource.Play();
         animator.SetBool("Punch", true);
         GameObject target = other;
         //other.enabled = false;
@@ -309,6 +317,7 @@ public class CivilianController : MonoBehaviour
 
 
             isCivilianAttacking = true;
+            audioSource.Stop();
            // gameSession.RemoveFollower(gameObject);
            
            // Destroy(gameObject);
@@ -316,6 +325,7 @@ public class CivilianController : MonoBehaviour
 
         else
         {
+            audioSource.Stop();
             animator.SetBool("Punch", false);
             GameObject newTarget = gameSession.GetNewEnemy();
             if(newTarget != null)
@@ -334,6 +344,7 @@ public class CivilianController : MonoBehaviour
 
     public void SetTargetASPlayer()
     {
+        audioSource.Stop();
         animator.SetBool("Punch", false);
         animator.SetBool("Run", true);
         isCivilianAttacking = false;
@@ -362,13 +373,14 @@ public class CivilianController : MonoBehaviour
         if(co != null)
         StopCoroutine(co);
         co = null;
-       // target = null;
+        audioSource.Stop();
+        // target = null;
         //isCivilianAttacking = true;
     }
 
     public void Win()
     {
-       
+        audioSource.Stop();
         followPlayer = false;
         isCivilianAttacking = false;
 
@@ -399,5 +411,7 @@ public class CivilianController : MonoBehaviour
             child.AddComponent<Rigidbody>();
             Destroy(child, 3f);
         }
+
+        AudioSource.PlayClipAtPoint(boneCrumbleSfx, Camera.main.transform.position);
     }
 }

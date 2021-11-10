@@ -11,6 +11,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] int numOfFollowersToEliminateEnemy = 1;
     [SerializeField] float baseHealth = 2f;
     [SerializeField] GameObject poofVfx;
+    [SerializeField] AudioClip audioclip;
 
     float durationOfConfusion = 3f;
 
@@ -45,6 +46,8 @@ public class EnemyController : MonoBehaviour
     bool isHealthTriggered = false;
     bool isBoss = false;
     float bossMarker = 0;
+
+    AudioSource audioSource;
     // Start is called before the first frame update
     void Start()
     {
@@ -66,8 +69,8 @@ public class EnemyController : MonoBehaviour
         }
 
         healthBar.SetMaxValue(health);
+        audioSource = GetComponent<AudioSource>();
 
-        
 
     }
 
@@ -187,6 +190,8 @@ public class EnemyController : MonoBehaviour
                 //agent.enabled = false;
                 animator.SetBool("Punch", true);
                 isHealthTriggered = true;
+
+             
         }
 
             if (other.tag == "Player Projectile" && !isConfused)
@@ -260,7 +265,11 @@ public class EnemyController : MonoBehaviour
             {
                 agent.SetDestination(this.target.transform.position);
                 animator.SetBool("Run", true);
-                
+                if (audioSource.enabled)
+                {
+                    audioSource.Play();
+                    // audioSource.enabled = false;
+                }
             }
         }
     }
@@ -288,6 +297,8 @@ public class EnemyController : MonoBehaviour
         Vector3 pos = new Vector3(p.x, p.y + 1f, p.z);
 
         GameObject poof = Instantiate(poofVfx, pos, Quaternion.identity);
+        Destroy(poof, 2f);
+        AudioSource.PlayClipAtPoint(audioclip, Camera.main.transform.position);
     }
 
 
