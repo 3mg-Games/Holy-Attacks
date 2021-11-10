@@ -60,7 +60,7 @@ public class CivilianController : MonoBehaviour
 
         if(isCivilianWaiting)
         {
-            radius.color = radiusActive;
+           // radius.color = radiusActive;
             
             waitTimer -= Time.deltaTime;
             civilianWait.SetValue(waitTimer);
@@ -130,6 +130,7 @@ public class CivilianController : MonoBehaviour
         radius.color = radiusActive;
 
         isCivilianWaiting = true;
+        player.IsPlayerSummoning = true;
         StartCoroutine(corutine);
     }
 
@@ -143,7 +144,7 @@ public class CivilianController : MonoBehaviour
         waitTimer = waitTimeBeforeConversion;
         civilianWait.SetMaxValue(waitTimer);
         civilianWait.gameObject.transform.GetChild(0).gameObject.SetActive(false);
-
+        player.IsPlayerSummoning = false;
 
     }
    
@@ -189,7 +190,7 @@ public class CivilianController : MonoBehaviour
         plusOne.transform.parent = null;
         plusOne.GetComponent<Animator>().enabled = true;
         Destroy(plusOne, 1f);
-
+        player.IsPlayerSummoning = false;
         //this.material = material;
         /*SkinnedMeshRenderer rend = transform.GetChild(1).gameObject.GetComponent<SkinnedMeshRenderer>();
         Material mat = rend.material;

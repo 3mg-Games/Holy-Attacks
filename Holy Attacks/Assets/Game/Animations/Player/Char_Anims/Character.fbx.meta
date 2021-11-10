@@ -12,7 +12,27 @@ ModelImporter:
   - first:
       74: 6165553400957861818
     second: Death
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.001
+    second: {fileID: 2100000, guid: d80e64baa41e9c544a6e11a843109904, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.002
+    second: {fileID: 2100000, guid: 6dde0e19c71d2b240a7c2408e902009f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: No Name
+    second: {fileID: 2100000, guid: a903aeaf2359f1d4e9c71d3e7e6e16b6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: stick.001
+    second: {fileID: 2100000, guid: f5cb332284f11b54e88f9cf6c948e1bc, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0

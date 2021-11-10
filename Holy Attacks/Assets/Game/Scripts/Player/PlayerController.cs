@@ -105,6 +105,8 @@ public class PlayerController : MonoBehaviour
 
     bool isBoundary = false;
 
+    bool isPlayerSummoning = false;
+    
     GameObject[] civilians;
 
     //Vector3 
@@ -133,7 +135,19 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    
+    public bool IsPlayerSummoning
+    {
+        get
+        {
+            return isPlayerSummoning;
+        }
+
+        set
+        {
+            isPlayerSummoning = value;
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -265,6 +279,12 @@ public class PlayerController : MonoBehaviour
 
                 shockWave.gameObject.SetActive(true);
 
+                if(isPlayerSummoning)
+                {
+                    animator.SetBool("Summon", true);
+                }
+
+               
                 //fakeJoystickOuterCircle.position = fakeJoystickOuterCircleInitialPos;
                 //fakeJoystickButton.position = fakeJoystickButtonInitialPos;
 
@@ -287,7 +307,8 @@ public class PlayerController : MonoBehaviour
             else
             {
                 isPlayerMoving = true;
-              //  playerRadius.enabled = false;
+                animator.SetBool("Summon", false);
+                //  playerRadius.enabled = false;
                 //playerRadius.gameObject.SetActive(false);
                 attackRadius.enabled = true;
                 ActivateCivilianRadius(false);
