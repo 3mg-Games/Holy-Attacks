@@ -96,7 +96,7 @@ public class GameSession : MonoBehaviour
         if (numFollowers > 5 && !isZoomedOut)
         {
             isZoomedOut = true;
-            originalCam.Priority = 1;
+           // originalCam.Priority = 1;
         }
 
     }

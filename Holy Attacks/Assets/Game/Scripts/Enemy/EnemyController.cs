@@ -10,6 +10,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] GameObject confused;
     [SerializeField] int numOfFollowersToEliminateEnemy = 1;
     [SerializeField] float baseHealth = 2f;
+    [SerializeField] GameObject poofVfx;
 
     float durationOfConfusion = 3f;
 
@@ -279,6 +280,14 @@ public class EnemyController : MonoBehaviour
     public void DecNumOfFollowersNeededToEliminateEnemy()
     {
         numOfFollowersToEliminateEnemy--;
+    }
+
+    private void OnDestroy()
+    {
+        var p = gameObject.transform.position;
+        Vector3 pos = new Vector3(p.x, p.y + 1f, p.z);
+
+        GameObject poof = Instantiate(poofVfx, pos, Quaternion.identity);
     }
 
 
