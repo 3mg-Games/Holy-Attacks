@@ -26,6 +26,10 @@ public class GameSession : MonoBehaviour
 
 
     [SerializeField] GameObject continueButton;
+    [SerializeField] GameObject levelCompletePanel;
+    [SerializeField] GameObject confettiL;
+    [SerializeField] GameObject confettiR;
+    
     //[SerializeField] float dist
 
     bool isZoomedOut = false;
@@ -315,7 +319,9 @@ public class GameSession : MonoBehaviour
                 follower.GetComponent<CivilianController>().Win();
             }
         }
-
+        confettiL.SetActive(true);
+        confettiR.SetActive(true);
+        levelCompletePanel.SetActive(true);
         continueButton.SetActive(true);
     }
 

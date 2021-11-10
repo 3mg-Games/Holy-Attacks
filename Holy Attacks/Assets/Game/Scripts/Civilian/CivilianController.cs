@@ -13,6 +13,8 @@ public class CivilianController : MonoBehaviour
     [SerializeField] SpriteRenderer radius;
     [SerializeField] Color radiusActive;
     [SerializeField] Color radiusInActive;
+    [SerializeField] GameObject sword;
+    
     float waitTimeBeforeConversion;
 
     IEnumerator co = null;
@@ -36,6 +38,7 @@ public class CivilianController : MonoBehaviour
 
     float waitTimer;
     bool isCivilianWaiting = false;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -51,6 +54,8 @@ public class CivilianController : MonoBehaviour
 
         agent.enabled = false;
         radius.color = radiusInActive;
+
+        
         // material = this.transform.GetChild(0).gameObject.GetComponent<SkinnedMeshRenderer>().material;
     }
 
@@ -86,6 +91,7 @@ public class CivilianController : MonoBehaviour
         
         if(followPlayer)
         {
+            if(agent.enabled)
             agent.SetDestination(target.position);
             //agent.Resume
 
@@ -365,9 +371,33 @@ public class CivilianController : MonoBehaviour
        
         followPlayer = false;
         isCivilianAttacking = false;
-        agent.isStopped = true;
-        agent.enabled = false;
+
+        if (agent.isOnNavMesh)
+        {
+            agent.isStopped = true;
+            agent.enabled = false;
+        }
 
         animator.SetTrigger("Win");
+    }
+
+    private void OnDestroy()
+    {
+        
+        sword.transform.parent = null;
+        sword.AddComponent<Rigidbody>();
+        Destroy(sword, 3f);
+
+        GameObject brokenbones = transform.GetChild(6).gameObject;
+        brokenbones.transform.parent = null;
+        brokenbones.SetActive(true);
+
+        int l = brokenbones.transform.childCount;
+        for (int i = 0; i < l; i++)
+        {
+            GameObject child = brokenbones.transform.GetChild(i).gameObject;
+            child.AddComponent<Rigidbody>();
+            Destroy(child, 3f);
+        }
     }
 }
